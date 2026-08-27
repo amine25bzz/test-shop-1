@@ -311,7 +311,7 @@
       </div>
       <div class="brand-text">
         <h1>تحليل الاحداث</h1>
-        <span><span class="live-dot"></span> بيانات حقيقية مباشرة من متجرك</span>
+        <span><span class="live-dot"></span> بيانات من ملف data.json</span>
       </div>
     </div>
     <div class="header-actions">
@@ -325,13 +325,13 @@
         <button class="range-btn" data-range="30">آخر 30 يوم</button>
         <button class="range-btn" data-range="all">الكل</button>
       </div>
-      <button class="icon-action spin-on-click" id="refreshBtn" title="تحديث البيانات">
+      <button class="icon-action spin-on-click" id="refreshBtn" title="إعادة تحميل products.json و data.json">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/></svg>
       </button>
       <button class="icon-action" id="exportBtn" title="تنزيل data.json المحدّث">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
       </button>
-      <button class="icon-action danger" id="resetBtn" title="مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح">
+      <button class="icon-action danger" id="resetBtn" title="مسح الأحداث المخزّنة محلياً في هذا المتصفح والتي لم تُرفع بعد إلى data.json">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
       </button>
     </div>
@@ -364,8 +364,8 @@
   <div id="emptyBanner" class="empty-banner" style="display:none;">
     <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>
     <div>
-      <h3>لا توجد بيانات حقيقية مسجّلة بعد</h3>
-      <p>هذه اللوحة تعرض الأحداث الفعلية المسجلة من متجرك (زيارات، مشاهدات، نقرات، طلبات). قم بزيارة المتجر والتفاعل مع المنتجات، ثم عد لهذه الصفحة لرؤية البيانات. الأحداث تُسجَّل مباشرة في متصفحك، وتُدمَج تلقائياً مع أي سجل محفوظ سابقاً في <code>data.json</code>.</p>
+      <h3>لا توجد بيانات في data.json بعد</h3>
+      <p>هذه اللوحة تعرض <strong>فقط</strong> الأحداث المحفوظة في ملف <code>data.json</code> على الخادم (زيارات، مشاهدات، نقرات، طلبات) — ولا تعرض أي شيء من التخزين المحلي للمتصفح. الأحداث الحية تُسجَّل أولاً في متصفح كل زائر عبر صفحات المتجر، ثم يجب تجميعها وتنزيلها من هذه الصفحة (زر "⬇️ تنزيل data.json المحدّث") ورفعها إلى مستودع GitHub حتى تظهر هنا لجميع من يفتح لوحة التحكم.</p>
     </div>
   </div>
 
@@ -459,7 +459,7 @@
         <div class="ai-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m6.8 6.8-2.8-2.8"/><path d="M2 12h4"/><path d="m6.8 17.2-2.8 2.8"/><path d="M12 18v4"/><path d="m17.2 17.2 2.8 2.8"/><path d="M18 12h4"/><path d="m17.2 6.8 2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg></div>
         <div>
           <h3>المساعد الذكي لتحليل المبيعات والسوق</h3>
-          <p>مدعوم بـ الذكاء الاصطناعي — يحلّل بيانات متجرك الحقيقية ويقترح خطوات لزيادة المبيعات</p>
+          <p>مدعوم بـ الذكاء الاصطناعي — يحلّل بيانات data.json ويقترح خطوات لزيادة المبيعات</p>
         </div>
       </div>
       <button class="ai-btn" id="aiAnalyzeBtn">
@@ -472,7 +472,7 @@
     <div class="ai-body">
       <div class="ai-placeholder" id="aiPlaceholder">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m6.8 6.8-2.8-2.8"/><path d="M2 12h4"/><path d="m6.8 17.2-2.8 2.8"/><path d="M12 18v4"/><path d="m17.2 17.2 2.8 2.8"/><path d="M18 12h4"/><path d="m17.2 6.8 2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg>
-        <div>اضغط "تحليل ذكي الآن" ليقوم المساعد بفحص بيانات متجرك وإعطائك تفسيرات وتوصيات عملية لزيادة المبيعات.</div>
+        <div>اضغط "تحليل ذكي الآن" ليقوم المساعد بفحص بيانات data.json وإعطائك تفسيرات وتوصيات عملية لزيادة المبيعات.</div>
       </div>
       <div class="ai-messages" id="aiMessages" style="display:none;"></div>
 
@@ -493,19 +493,22 @@
 </div>
 
 <footer class="note">
-  المنتجات تُحمَّل تلقائياً من products.json. أحداث الزيارات والنقرات والطلبات تُسجَّل مباشرة في متصفحك (localStorage) بواسطة صفحات المتجر، وتُدمَج هنا تلقائياً مع أي سجل تاريخي محفوظ في data.json.
-  لجعل هذا السجل التاريخي يظهر لجميع الأجهزة، اضغط "⬇️ تنزيل data.json المحدّث" بين الحين والآخر وارفع الملف إلى مستودع GitHub الخاص بالموقع.
+  المنتجات تُحمَّل تلقائياً من products.json. لوحة "تحليل الأحداث" هذه تعرض والمساعد الذكي يحلل <strong>فقط</strong> الأحداث المحفوظة في ملف data.json على الخادم — لا شيء منها يُقرأ من التخزين المحلي للمتصفح.
+  أحداث الزيارات والنقرات والطلبات تُسجَّل حياً في متصفح كل زائر عبر صفحات المتجر والمنتج (localStorage). لنقلها إلى data.json ليراها الجميع: اضغط "⬇️ تنزيل data.json المحدّث" في هذه الصفحة بين الحين والآخر، ثم ارفع الملف الناتج إلى مستودع GitHub الخاص بالموقع ليحل محل النسخة القديمة.
 </footer>
 
 <script>
 /* ================================================================
-   لوحة التحكم — تحميل تلقائي للمنتجات من products.json (بدون
-   الاعتماد على localStorage لكتالوج المنتجات)، ودمج بيانات
-   التحليلات الحيّة المسجّلة في هذا المتصفح (localStorage، تُكتب من
-   صفحات المتجر والمنتج) مع سجل تاريخي محفوظ في data.json.
-   بما أن الموقع مستضاف على GitHub Pages (استضافة ثابتة)، لا يمكن
-   الكتابة التلقائية في data.json على الخادم؛ يمكن تنزيل النسخة
-   المحدّثة ورفعها يدوياً للحفاظ على السجل عبر جميع الأجهزة.
+   صفحة "تحليل الأحداث":
+   - كتالوج المنتجات: يُجلب تلقائياً من products.json (بدون أي زر اختيار).
+   - عرض الإحصائيات + المساعد الذكي: يعتمدان حصرياً على ما هو محفوظ في
+     data.json (يُجلب تلقائياً عند فتح الصفحة، بدون أي زر اختيار، وبدون
+     أي قراءة من localStorage).
+   - زر "⬇️ تنزيل data.json المحدّث" هو الاستثناء الوحيد الذي يلمس
+     localStorage: فهو يجمع الأحداث الحية المسجّلة في هذا المتصفح (من
+     صفحات المتجر/المنتج) مع تاريخ data.json الحالي، لإنتاج ملف جاهز
+     لرفعه إلى GitHub — لأن الاستضافة الثابتة لا تسمح للصفحة بالكتابة
+     في data.json مباشرة على الخادم.
    ================================================================ */
 
 const PLAS_KEYS = {
@@ -561,7 +564,7 @@ async function loadProductsCatalog(){
   render();
 }
 
-// ========== تحميل تلقائي للسجل التاريخي المحفوظ من data.json ==========
+// ========== تحميل تلقائي للسجل المحفوظ من data.json (المصدر الوحيد للعرض) ==========
 async function loadPersistedAnalytics(){
   try{
     const res = await fetch('data.json', { cache:'no-store' });
@@ -583,7 +586,20 @@ async function loadPersistedAnalytics(){
   render();
 }
 
-// ========== دمج الأحداث الحيّة (localStorage) مع السجل التاريخي (data.json) ==========
+const PERSIST_KEY_MAP = {
+  [PLAS_KEYS.VISITS]: 'visits',
+  [PLAS_KEYS.PRODUCT_VIEWS]: 'product_views',
+  [PLAS_KEYS.CLICKS]: 'clicks',
+  [PLAS_KEYS.ORDERS]: 'orders'
+};
+
+// مصدر العرض والمساعد الذكي: data.json فقط، بدون أي قراءة من localStorage
+function loadPersisted(key){
+  return (persistedAnalytics[PERSIST_KEY_MAP[key]] || []).slice().sort((a,b)=> (a.ts||0) - (b.ts||0));
+}
+
+// يُستخدم فقط عند بناء ملف data.json للتنزيل: يدمج ما هو محفوظ فعلاً +
+// الأحداث الحية المسجّلة في هذا المتصفح كي لا تُفقد عند الرفع.
 function dedupeEvents(arr){
   const seen = new Set();
   const out = [];
@@ -593,15 +609,7 @@ function dedupeEvents(arr){
   });
   return out;
 }
-
-const PERSIST_KEY_MAP = {
-  [PLAS_KEYS.VISITS]: 'visits',
-  [PLAS_KEYS.PRODUCT_VIEWS]: 'product_views',
-  [PLAS_KEYS.CLICKS]: 'clicks',
-  [PLAS_KEYS.ORDERS]: 'orders'
-};
-
-function loadArr(key){
+function loadForExport(key){
   let local = [];
   try{ const v = JSON.parse(localStorage.getItem(key) || '[]'); if(Array.isArray(v)) local = v; }catch(e){}
   const persisted = persistedAnalytics[PERSIST_KEY_MAP[key]] || [];
@@ -651,10 +659,11 @@ function render(){
   const range = currentRange;
   const rangeLabels = { today:'اليوم', '7':'آخر 7 أيام', '30':'آخر 30 يوم', all:'كل الفترات' };
 
-  const visitsAllRaw = loadArr(PLAS_KEYS.VISITS);
-  const viewsAllRaw = loadArr(PLAS_KEYS.PRODUCT_VIEWS);
-  const clicksAllRaw = loadArr(PLAS_KEYS.CLICKS);
-  const ordersAllRaw = loadArr(PLAS_KEYS.ORDERS);
+  // المصدر الوحيد للعرض: data.json (persistedAnalytics) — بدون localStorage
+  const visitsAllRaw = loadPersisted(PLAS_KEYS.VISITS);
+  const viewsAllRaw = loadPersisted(PLAS_KEYS.PRODUCT_VIEWS);
+  const clicksAllRaw = loadPersisted(PLAS_KEYS.CLICKS);
+  const ordersAllRaw = loadPersisted(PLAS_KEYS.ORDERS);
 
   const totalEventsEver = visitsAllRaw.length + viewsAllRaw.length + clicksAllRaw.length + ordersAllRaw.length;
   document.getElementById('emptyBanner').style.display = totalEventsEver === 0 ? 'flex' : 'none';
@@ -709,7 +718,7 @@ function render(){
   document.getElementById('rangeLabel').textContent = 'إحصائيات ' + rangeLabels[range];
   document.getElementById('lastUpdate').textContent = 'آخر تحديث: ' + new Date().toLocaleTimeString('ar-MA');
 
-  // ===== أداء المنتجات (الكتالوج من products.json فقط) =====
+  // ===== أداء المنتجات (الكتالوج من products.json، الأحداث من data.json) =====
   const perf = products.map(p => {
     const pViews = views.filter(v => Number(v.productId)===p.id).length;
     const pOrders = orders.filter(o => Number(o.productId)===p.id).length;
@@ -771,12 +780,14 @@ document.getElementById('refreshBtn').addEventListener('click', (e)=>{
 });
 
 function downloadDataJson(){
+  // يجمع سجل data.json الحالي + الأحداث الحية المسجّلة في هذا المتصفح،
+  // لأن هذا هو الشكل الوحيد لنقل الأحداث الجديدة إلى الملف الدائم على GitHub.
   const data = {
     exported_at: new Date().toISOString(),
-    visits: loadArr(PLAS_KEYS.VISITS),
-    product_views: loadArr(PLAS_KEYS.PRODUCT_VIEWS),
-    clicks: loadArr(PLAS_KEYS.CLICKS),
-    orders: loadArr(PLAS_KEYS.ORDERS)
+    visits: loadForExport(PLAS_KEYS.VISITS),
+    product_views: loadForExport(PLAS_KEYS.PRODUCT_VIEWS),
+    clicks: loadForExport(PLAS_KEYS.CLICKS),
+    orders: loadForExport(PLAS_KEYS.ORDERS)
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
   const url = URL.createObjectURL(blob);
@@ -790,32 +801,32 @@ document.getElementById('exportBtn').addEventListener('click', downloadDataJson)
 document.getElementById('exportDataBtn').addEventListener('click', downloadDataJson);
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
-  if(confirm('هل أنت متأكد من مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح فقط؟ السجل المحفوظ في data.json لن يتأثر إلا بعد تنزيله ورفعه يدوياً من جديد. هذا الإجراء لا يمكن التراجع عنه.')){
+  if(confirm('هل أنت متأكد من مسح الأحداث المخزّنة محلياً في هذا المتصفح فقط (والتي لم تُرفع بعد إلى data.json)؟ هذا لا يغيّر أي شيء في data.json نفسه ولا في العرض الحالي — فالعرض مبني على data.json فقط. هذا الإجراء لا يمكن التراجع عنه.')){
     Object.values(PLAS_KEYS).forEach(k => localStorage.removeItem(k));
-    render();
   }
 });
 
-// ========== Gemini AI (نفس الكود من الملف السابق) ==========
+// ========== Gemini AI ==========
 const GEMINI_API_KEY = 'AIzaSyD4x5fG7H8jK9l0QwErTyUiOpAsDfGhJkL';
 const GEMINI_MODEL = 'gemini-1.5-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const AI_SYSTEM_PROMPT = `أنت مستشار نمو وتسويق إلكتروني خبير، متخصص في التجارة الإلكترونية والبيع عبر واتساب في السوق المغربي والعربي.
-مهمتك: تحليل بيانات المتجر الحقيقية المرفقة، واستخلاص أنماط وتفسيرات دقيقة، ثم اقتراح خطوات عملية وقابلة للتنفيذ فوراً لزيادة عدد الطلبات والمبيعات ونسبة التحويل.
+مهمتك: تحليل بيانات المتجر الحقيقية المرفقة (المأخوذة من ملف data.json)، واستخلاص أنماط وتفسيرات دقيقة، ثم اقتراح خطوات عملية وقابلة للتنفيذ فوراً لزيادة عدد الطلبات والمبيعات ونسبة التحويل.
 اعتمد فقط على الأرقام المعطاة، ولا تخترع بيانات غير موجودة.
 أجب دائماً باللهجة المغربية الدارجة المبسطة والمهنية، بأسلوب مباشر ومشجّع، ونظّم الجواب في نقاط قصيرة وعناوين واضحة.`;
 
 let aiConversation = [];
 let aiIsLoading = false;
 
+// لقطة البيانات المُرسلة للمساعد الذكي: من data.json فقط (بدون localStorage)
 function buildStoreDataSnapshot(){
   const range = currentRange;
   const rangeLabels = { today:'اليوم', '7':'آخر 7 أيام', '30':'آخر 30 يوم', all:'كل الفترات' };
-  const visitsAllRaw = loadArr(PLAS_KEYS.VISITS);
-  const viewsAllRaw = loadArr(PLAS_KEYS.PRODUCT_VIEWS);
-  const clicksAllRaw = loadArr(PLAS_KEYS.CLICKS);
-  const ordersAllRaw = loadArr(PLAS_KEYS.ORDERS);
+  const visitsAllRaw = loadPersisted(PLAS_KEYS.VISITS);
+  const viewsAllRaw = loadPersisted(PLAS_KEYS.PRODUCT_VIEWS);
+  const clicksAllRaw = loadPersisted(PLAS_KEYS.CLICKS);
+  const ordersAllRaw = loadPersisted(PLAS_KEYS.ORDERS);
   const visits = filterByRange(visitsAllRaw, range);
   const views = filterByRange(viewsAllRaw, range);
   const clicks = filterByRange(clicksAllRaw, range);
@@ -907,8 +918,8 @@ async function askAiAssistant(userQuestion){
   if(aiIsLoading) return;
   const snapshot = buildStoreDataSnapshot();
   const promptText = userQuestion
-    ? `بيانات المتجر الحالية:\n${snapshot}\n\nسؤال صاحب المتجر: ${userQuestion}`
-    : `حلل بيانات المتجر التالية وأعطني: 1) تفسير واضح لأداء المتجر حالياً، 2) أهم الملاحظات، 3) توصيات عملية ومحددة لزيادة عدد المبيعات والطلبات.\n\nبيانات المتجر:\n${snapshot}`;
+    ? `بيانات المتجر الحالية (من data.json):\n${snapshot}\n\nسؤال صاحب المتجر: ${userQuestion}`
+    : `حلل بيانات المتجر التالية (المأخوذة من data.json) وأعطني: 1) تفسير واضح لأداء المتجر حالياً، 2) أهم الملاحظات، 3) توصيات عملية ومحددة لزيادة عدد المبيعات والطلبات.\n\nبيانات المتجر:\n${snapshot}`;
 
   aiConversation.push({ role:'user', text: userQuestion || 'حلل أداء متجري الآن وأعطني توصيات لزيادة المبيعات' });
   renderAiMessages();
@@ -961,14 +972,13 @@ document.getElementById('aiChips').addEventListener('click', (e)=>{
   askAiAssistant(chip.dataset.q);
 });
 
-// ========== التحميل الأولي: تلقائي بالكامل ==========
+// ========== التحميل الأولي: تلقائي بالكامل، بدون أي تدخل من المستخدم ==========
 loadProductsCatalog();
 loadPersistedAnalytics();
 
-window.addEventListener('storage', (e)=>{
-  if(Object.values(PLAS_KEYS).includes(e.key)) render();
-});
-setInterval(render, 20000);
+// إعادة تحميل data.json دورياً (وليس الاعتماد على localStorage) لإبقاء العرض محدّثاً
+// إن رفعتَ نسخة جديدة من data.json إلى GitHub أثناء بقاء الصفحة مفتوحة.
+setInterval(loadPersistedAnalytics, 30000);
 </script>
 </body>
 </html>
