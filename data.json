@@ -1,6 +1,14 @@
 {
-  "exported_at": "2026-08-27T04:09:35.722Z",
+  "exported_at": "2026-08-27T10:07:56.593Z",
   "visits": [
+    {
+      "ts": 1787793420352,
+      "page": "home"
+    },
+    {
+      "ts": 1787794303778,
+      "page": "home"
+    },
     {
       "ts": 1787794606564,
       "page": "home"
@@ -19,6 +27,10 @@
     },
     {
       "ts": 1787795135270,
+      "page": "home"
+    },
+    {
+      "ts": 1787795254158,
       "page": "home"
     },
     {
@@ -62,15 +74,40 @@
       "page": "home"
     },
     {
+      "ts": 1787802211700,
+      "page": "home"
+    },
+    {
+      "ts": 1787802214994,
+      "page": "home"
+    },
+    {
       "ts": 1787803420187,
+      "page": "home"
+    },
+    {
+      "ts": 1787803659134,
       "page": "home"
     },
     {
       "ts": 1787803745557,
       "page": "home"
+    },
+    {
+      "ts": 1787825199490,
+      "page": "home"
+    },
+    {
+      "ts": 1787825203221,
+      "page": "home"
     }
   ],
   "product_views": [
+    {
+      "ts": 1787794389537,
+      "productId": 21,
+      "productName": "aa"
+    },
     {
       "ts": 1787800254152,
       "productId": 5,
@@ -108,6 +145,12 @@
     }
   ],
   "clicks": [
+    {
+      "ts": 1787794389224,
+      "productId": 21,
+      "productName": "aa",
+      "action": "buy_now"
+    },
     {
       "ts": 1787800252703,
       "productId": 5,
@@ -152,6 +195,12 @@
     }
   ],
   "orders": [
+    {
+      "ts": 1787794391915,
+      "productId": 21,
+      "productName": "aa",
+      "price": 111
+    },
     {
       "ts": 1787800258831,
       "productId": 5,
