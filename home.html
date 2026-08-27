@@ -40,7 +40,7 @@
         .header-wrap { max-width: 1240px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; gap: 20px; }
         .logo { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 22px; color: #fff; flex-shrink: 0; }
         .logo .dot { color: var(--amber-400); }
-        .logo-badge { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .logo-badge { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(232, 148, 15, 0.4); }
         .logo-badge img { width: 100%; height: 100%; object-fit: contain; }
         .back-link { margin-right: auto; color: var(--steel-300); font-size: 13px; display: flex; align-items: center; gap: 6px; transition: .2s; }
         .back-link:hover { color: #fff; }
@@ -121,8 +121,6 @@
         .toast svg { width: 17px; height: 17px; stroke: var(--ok-500); fill: none; stroke-width: 2; }
         .image-preview { margin-top: 6px; max-width: 120px; max-height: 120px; border-radius: var(--radius-sm); border: 1px solid #e3e6ee; padding: 4px; display: none; }
         .image-preview.show { display: block; }
-        .file-select-btn { background: var(--ok-500); color: #fff; font-weight: 700; font-size: 12.5px; padding: 7px 16px; border-radius: 8px; transition: .2s; }
-        .file-select-btn:hover { background: #0e9f57; }
         @media(max-width:768px) {
             .form-grid { grid-template-columns: 1fr; }
             .header-wrap { flex-wrap: wrap; }
@@ -143,9 +141,6 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
                 العودة للمتجر
             </a>
-            <a href="dashboard.html" class="back-link" style="margin-right:0;">
-                📊 لوحة التحكم
-            </a>
         </div>
     </header>
 
@@ -153,23 +148,22 @@
         <div class="page-header">
             <div>
                 <h1>📦 إدارة المنتجات</h1>
-                <div class="sub">أضف، عدّل، أو احذف المنتجات — جميع التغييرات تُحفظ مباشرة في ملف products.json</div>
+                <div class="sub">أضف، عدّل، أو احذف المنتجات — البيانات تُحمّل تلقائياً من ملف products.json</div>
             </div>
             <div class="page-header-right">
                 <span class="file-status" id="fileStatus">
                     <span class="dot red" id="statusDot"></span>
-                    <span id="statusText">غير متصل</span>
+                    <span id="statusText">جارِ التحميل...</span>
                 </span>
-                <button class="file-select-btn" id="selectFileBtn">📂 اختيار products.json</button>
                 <span id="productCount" style="font-weight:700;color:var(--steel-500);font-size:14px;">0 منتج</span>
                 <button type="button" class="btn-add-product" id="openAddModalBtn">➕ إضافة منتج جديد</button>
             </div>
         </div>
 
         <div class="sync-banner">
-            <span>💾 البيانات تُقرأ وتُكتب مباشرة على ملف <strong>products.json</strong> على جهازك.</span>
+            <span>💾 يتم تحميل المنتجات تلقائياً من ملف <strong>products.json</strong> عند فتح الصفحة. لأن الموقع مستضاف على GitHub Pages (موقع ثابت)، لا يمكن للصفحة الكتابة في الملف مباشرة على الخادم — أي تعديل (إضافة/تحرير/حذف) يبقى مؤقتاً في المتصفح، ويجب تنزيل الملف المحدّث ثم رفعه إلى مستودع GitHub ليظهر لبقية الزوار.</span>
             <div class="sync-actions">
-                <button class="btn-sync outline" id="downloadJsonBtn">⬇️ تنزيل products.json</button>
+                <button class="btn-sync outline" id="downloadJsonBtn">⬇️ تنزيل products.json المحدّث</button>
             </div>
         </div>
 
@@ -269,11 +263,13 @@
 
     <script>
     /* ================================================================
-       إدارة المنتجات — باستخدام File System Access API
-       القراءة والكتابة مباشرة في products.json
+       إدارة المنتجات — تحميل تلقائي من products.json عبر fetch
+       ملاحظة: لأن الموقع مستضاف على GitHub Pages (استضافة ثابتة)،
+       لا يمكن الكتابة مباشرة في products.json من المتصفح.
+       أي تعديل يُحفظ محلياً (في الذاكرة/localStorage) ويجب تنزيله
+       ثم رفعه يدوياً إلى مستودع GitHub ليظهر لجميع الزوار.
        ================================================================ */
 
-    let fileHandle = null;
     let products = [];
 
     // ========== تحديث حالة الاتصال ==========
@@ -289,87 +285,49 @@
         }
     }
 
-    // ========== قراءة المنتجات من الملف ==========
-    async function readProductsFromFile() {
-        if (!fileHandle) {
-            updateFileStatus(false, 'لم يتم اختيار ملف');
-            return [];
-        }
+    // ========== تحميل المنتجات تلقائياً من products.json ==========
+    async function autoLoadProducts() {
         try {
-            const file = await fileHandle.getFile();
-            const text = await file.text();
-            const data = JSON.parse(text);
+            const res = await fetch('products.json', { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
             if (Array.isArray(data)) {
                 products = data;
-                try{ localStorage.setItem('PLAS_products', JSON.stringify(data)); }catch(e){}
+                try { localStorage.setItem('PLAS_products', JSON.stringify(data)); } catch (e) {}
                 updateFileStatus(true, `${products.length} منتج`);
                 renderProducts();
-                return products;
-            } else {
-                throw new Error('الملف لا يحتوي على مصفوفة');
+                return;
             }
+            throw new Error('الملف لا يحتوي على مصفوفة');
         } catch (err) {
-            console.error('خطأ في قراءة الملف:', err);
-            showToast('⚠️ تعذر قراءة الملف: ' + err.message);
-            updateFileStatus(false, 'خطأ في القراءة');
-            return [];
-        }
-    }
-
-    // ========== كتابة المنتجات إلى الملف ==========
-    async function writeProductsToFile(data) {
-        if (!fileHandle) {
-            showToast('⚠️ لم يتم اختيار ملف products.json بعد');
-            return false;
-        }
-        try {
-            const writable = await fileHandle.createWritable();
-            await writable.write(JSON.stringify(data, null, 2));
-            await writable.close();
-            products = data;
-            try{ localStorage.setItem('PLAS_products', JSON.stringify(data)); }catch(e){}
-            updateFileStatus(true, `${products.length} منتج`);
-            renderProducts();
-            showToast('✅ تم حفظ البيانات في products.json');
-            return true;
-        } catch (err) {
-            console.error('خطأ في كتابة الملف:', err);
-            showToast('⚠️ فشل حفظ الملف: ' + err.message);
-            return false;
-        }
-    }
-
-    // ========== اختيار الملف ==========
-    async function selectFile() {
-        try {
-            const [handle] = await window.showOpenFilePicker({
-                types: [{
-                    description: 'JSON files',
-                    accept: { 'application/json': ['.json'] },
-                }],
-                multiple: false,
-            });
-            if (handle) {
-                fileHandle = handle;
-                const opts = { mode: 'readwrite' };
-                const permission = await fileHandle.requestPermission(opts);
-                if (permission === 'granted') {
-                    await readProductsFromFile();
-                    showToast('✅ تم الاتصال بالملف بنجاح');
-                } else {
-                    updateFileStatus(false, 'تم رفض الإذن');
-                    showToast('⚠️ تحتاج إلى منح إذن الكتابة للملف');
+            console.error('تعذر تحميل products.json:', err);
+            updateFileStatus(false, 'تعذر تحميل الملف');
+            // fallback: نسخة مخزنة محلياً إن وُجدت
+            try {
+                const cached = localStorage.getItem('PLAS_products');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed)) {
+                        products = parsed;
+                        renderProducts();
+                        showToast('⚠️ تم عرض نسخة محفوظة مؤقتاً (تعذر الوصول للملف الأصلي)');
+                        return;
+                    }
                 }
-            }
-        } catch (err) {
-            if (err.name !== 'AbortError') {
-                console.error('خطأ في اختيار الملف:', err);
-                showToast('⚠️ حدث خطأ أثناء اختيار الملف');
-            }
+            } catch (e) {}
+            showToast('⚠️ تعذر تحميل products.json: ' + err.message);
+            renderProducts();
         }
     }
 
-    document.getElementById('selectFileBtn').addEventListener('click', selectFile);
+    // ========== تحديث محلي للمنتجات (بدون كتابة حقيقية على الخادم) ==========
+    function saveProductsLocally(data) {
+        products = data;
+        try { localStorage.setItem('PLAS_products', JSON.stringify(data)); } catch (e) {}
+        updateFileStatus(true, `${products.length} منتج (محلياً)`);
+        renderProducts();
+        showToast('✅ تم الحفظ محلياً — نزّل الملف وارفعه إلى GitHub ليظهر للزوار');
+    }
 
     // ========== عرض المنتجات ==========
     function renderProducts() {
@@ -380,7 +338,7 @@
                     <div class="empty-state">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
                         <h3>لا توجد منتجات</h3>
-                        <p>${fileHandle ? 'أضف منتجك الأول باستخدام زر "إضافة منتج جديد"' : 'اختر ملف products.json أولاً'}</p>
+                        <p>أضف منتجك الأول باستخدام زر "إضافة منتج جديد"</p>
                     </div>
                 </td></tr>`;
             document.getElementById('productCount').textContent = '0 منتج';
@@ -443,11 +401,6 @@
     document.getElementById('productForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        if (!fileHandle) {
-            showToast('⚠️ يرجى اختيار ملف products.json أولاً');
-            return;
-        }
-
         const id = document.getElementById('editId').value;
         const name = document.getElementById('pName').value.trim();
         if (!name) { showToast('يرجى إدخال اسم المنتج'); return; }
@@ -492,10 +445,8 @@
             updatedProducts.push(product);
         }
 
-        const success = await writeProductsToFile(updatedProducts);
-        if (success) {
-            closeFormModal();
-        }
+        saveProductsLocally(updatedProducts);
+        closeFormModal();
     });
 
     // ========== تعديل منتج ==========
@@ -537,16 +488,10 @@
     }
 
     // ========== حذف منتج ==========
-    async function deleteProduct(id) {
-        if (!fileHandle) {
-            showToast('⚠️ يرجى اختيار ملف products.json أولاً');
-            return;
-        }
+    function deleteProduct(id) {
         const updated = products.filter(p => p.id !== id);
-        const success = await writeProductsToFile(updated);
-        if (success) {
-            showToast('🗑️ تم حذف المنتج');
-        }
+        saveProductsLocally(updated);
+        showToast('🗑️ تم حذف المنتج محلياً — نزّل الملف وارفعه إلى GitHub ليظهر للزوار');
     }
 
     // ========== إدارة النافذة المنبثقة ==========
@@ -656,7 +601,7 @@
         }
     });
 
-    // ========== تنزيل نسخة احتياطية ==========
+    // ========== تنزيل النسخة المحدّثة ==========
     document.getElementById('downloadJsonBtn').addEventListener('click', function() {
         if (!products || products.length === 0) {
             showToast('⚠️ لا توجد منتجات لتصديرها');
@@ -671,7 +616,7 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('⬇️ تم تنزيل products.json');
+        showToast('⬇️ تم تنزيل products.json — ارفعه الآن إلى مستودع GitHub');
     });
 
     // ========== Toast ==========
@@ -683,38 +628,8 @@
         window._toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // ========== التحميل الأولي ==========
-    if (!('showOpenFilePicker' in window)) {
-        showToast('⚠️ متصفحك لا يدعم File System API، استخدم Chrome أو Edge');
-        updateFileStatus(false, 'المتصفح غير مدعوم');
-    } else {
-        updateFileStatus(false, 'اختر ملف products.json');
-    }
-
-    // محاولة استعادة من localStorage
-    try{
-        const cached = localStorage.getItem('PLAS_products');
-        if(cached){
-            const parsed = JSON.parse(cached);
-            if(Array.isArray(parsed) && parsed.length > 0){
-                products = parsed;
-                renderProducts();
-                updateFileStatus(false, 'بيانات مخزنة مؤقتاً');
-            }
-        }
-    }catch(e){}
-
-    renderProducts();
-
-    // الاستماع لتحديثات localStorage
-    window.addEventListener('storage', (e)=>{
-        if(e.key === 'PLAS_products'){
-            try{
-                products = JSON.parse(e.newValue) || [];
-                renderProducts();
-            }catch(err){}
-        }
-    });
+    // ========== التحميل الأولي: تلقائي من products.json ==========
+    autoLoadProducts();
     </script>
 </body>
 </html>
