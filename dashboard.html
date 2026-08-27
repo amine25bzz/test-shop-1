@@ -596,9 +596,23 @@ function cutoffForRange(range){
   return 0;
 }
 
+// يحوّل أي شكل للوقت (رقم مللي ثانية أو نص تاريخ ISO) إلى رقم مللي ثانية صالح للمقارنة
+function toTs(e){
+  if(!e) return NaN;
+  if(typeof e.ts === 'number' && !isNaN(e.ts)) return e.ts;
+  if(typeof e.ts === 'string'){
+    const n = Date.parse(e.ts);
+    if(!isNaN(n)) return n;
+  }
+  return NaN;
+}
+
 function filterByRange(arr, range){
   const cutoff = cutoffForRange(range);
-  return arr.filter(e => e && typeof e.ts === 'number' && e.ts >= cutoff);
+  return arr.filter(e => {
+    const t = toTs(e);
+    return !isNaN(t) && t >= cutoff;
+  });
 }
 
 function animateNumber(el, target, isDecimal, suffix){
@@ -628,10 +642,10 @@ function render(){
   const rangeLabels = { today:'اليوم', '7':'آخر 7 أيام', '30':'آخر 30 يوم', all:'كل الفترات' };
 
   // المصدر الوحيد: data.json فقط (بدون أي دمج مع localStorage)
-  const visitsAllRaw = [...dataJson.visits].sort((a,b)=>(a.ts||0)-(b.ts||0));
-  const viewsAllRaw = [...dataJson.product_views].sort((a,b)=>(a.ts||0)-(b.ts||0));
-  const clicksAllRaw = [...dataJson.clicks].sort((a,b)=>(a.ts||0)-(b.ts||0));
-  const ordersAllRaw = [...dataJson.orders].sort((a,b)=>(a.ts||0)-(b.ts||0));
+  const visitsAllRaw = [...dataJson.visits].sort((a,b)=>(toTs(a)||0)-(toTs(b)||0));
+  const viewsAllRaw = [...dataJson.product_views].sort((a,b)=>(toTs(a)||0)-(toTs(b)||0));
+  const clicksAllRaw = [...dataJson.clicks].sort((a,b)=>(toTs(a)||0)-(toTs(b)||0));
+  const ordersAllRaw = [...dataJson.orders].sort((a,b)=>(toTs(a)||0)-(toTs(b)||0));
 
   const totalEventsEver = visitsAllRaw.length + viewsAllRaw.length + clicksAllRaw.length + ordersAllRaw.length;
   document.getElementById('emptyBanner').style.display = totalEventsEver === 0 ? 'flex' : 'none';
@@ -652,7 +666,7 @@ function render(){
       const days = range==='7' ? 7 : 30;
       curStart = now - days*86400000; prevEnd = curStart; prevStart = curStart - days*86400000;
     }
-    return arrAll.filter(e => e.ts >= prevStart && e.ts < prevEnd).length;
+    return arrAll.filter(e => { const t = toTs(e); return !isNaN(t) && t >= prevStart && t < prevEnd; }).length;
   }
   function trendPct(currentCount, arrAll){
     const prev = prevRangeCounts(arrAll);
@@ -680,7 +694,7 @@ function render(){
   setTrend(document.getElementById('trendViews'), views.length, viewsAllRaw);
   setTrend(document.getElementById('trendClicks'), clicks.length, clicksAllRaw);
   setTrend(document.getElementById('trendOrders'), orders.length, ordersAllRaw);
-  setTrend(document.getElementById('trendRevenue'), revenue, ordersAllRaw.map(o=>({ts:o.ts})));
+  setTrend(document.getElementById('trendRevenue'), revenue, ordersAllRaw.map(o=>({ts:toTs(o)})));
   document.getElementById('trendConv').textContent = visits.length>0 ? conv.toFixed(1)+'%' : '—';
 
   document.getElementById('rangeLabel').textContent = 'إحصائيات ' + rangeLabels[range];
@@ -762,7 +776,7 @@ function localArr(key){
   return [];
 }
 function mergedForExport(persistedArr, key){
-  return dedupeEvents([...persistedArr, ...localArr(key)]).sort((a,b)=>(a.ts||0)-(b.ts||0));
+  return dedupeEvents([...persistedArr, ...localArr(key)]).sort((a,b)=>(toTs(a)||0)-(toTs(b)||0));
 }
 
 function downloadDataJson(){
