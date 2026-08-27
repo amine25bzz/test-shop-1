@@ -1,7 +1,174 @@
 {
-  "exported_at": "2026-08-27T00:00:00.000Z",
-  "visits": [],
-  "product_views": [],
-  "clicks": [],
-  "orders": []
+  "exported_at": "2026-08-27T04:09:35.722Z",
+  "visits": [
+    {
+      "ts": 1787794606564,
+      "page": "home"
+    },
+    {
+      "ts": 1787795082722,
+      "page": "home"
+    },
+    {
+      "ts": 1787795085867,
+      "page": "home"
+    },
+    {
+      "ts": 1787795102754,
+      "page": "home"
+    },
+    {
+      "ts": 1787795135270,
+      "page": "home"
+    },
+    {
+      "ts": 1787795409573,
+      "page": "home"
+    },
+    {
+      "ts": 1787799879027,
+      "page": "home"
+    },
+    {
+      "ts": 1787800032242,
+      "page": "home"
+    },
+    {
+      "ts": 1787800198239,
+      "page": "home"
+    },
+    {
+      "ts": 1787800266404,
+      "page": "home"
+    },
+    {
+      "ts": 1787800588301,
+      "page": "home"
+    },
+    {
+      "ts": 1787800613131,
+      "page": "home"
+    },
+    {
+      "ts": 1787801480332,
+      "page": "home"
+    },
+    {
+      "ts": 1787801487287,
+      "page": "home"
+    },
+    {
+      "ts": 1787801515018,
+      "page": "home"
+    },
+    {
+      "ts": 1787803420187,
+      "page": "home"
+    },
+    {
+      "ts": 1787803745557,
+      "page": "home"
+    }
+  ],
+  "product_views": [
+    {
+      "ts": 1787800254152,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة"
+    },
+    {
+      "ts": 1787800271125,
+      "productId": 2,
+      "productName": "كشاف طاقة شمسية مع لوح وشاحن"
+    },
+    {
+      "ts": 1787801479143,
+      "productId": 2,
+      "productName": "كشاف طاقة شمسية مع لوح وشاحن"
+    },
+    {
+      "ts": 1787801551913,
+      "productId": 7,
+      "productName": "مرش رش زراعي كهربائي 20 لتر"
+    },
+    {
+      "ts": 1787801660265,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة"
+    },
+    {
+      "ts": 1787803748538,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة"
+    },
+    {
+      "ts": 1787803760646,
+      "productId": 7,
+      "productName": "مرش رش زراعي كهربائي 20 لتر"
+    }
+  ],
+  "clicks": [
+    {
+      "ts": 1787800252703,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة",
+      "action": "buy_now"
+    },
+    {
+      "ts": 1787800270535,
+      "productId": 2,
+      "productName": "كشاف طاقة شمسية مع لوح وشاحن",
+      "action": "buy_now"
+    },
+    {
+      "ts": 1787801547729,
+      "productId": 7,
+      "productName": "مرش رش زراعي كهربائي 20 لتر",
+      "action": "buy_now"
+    },
+    {
+      "ts": 1787801652790,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة",
+      "action": "add_to_cart"
+    },
+    {
+      "ts": 1787801655389,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة",
+      "action": "buy_now"
+    },
+    {
+      "ts": 1787803748206,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة",
+      "action": "buy_now"
+    },
+    {
+      "ts": 1787803760530,
+      "productId": 7,
+      "productName": "مرش رش زراعي كهربائي 20 لتر",
+      "action": "buy_now"
+    }
+  ],
+  "orders": [
+    {
+      "ts": 1787800258831,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة",
+      "price": 999
+    },
+    {
+      "ts": 1787800600119,
+      "productId": 2,
+      "productName": "كشاف طاقة شمسية مع لوح وشاحن",
+      "price": 399
+    },
+    {
+      "ts": 1787803750846,
+      "productId": 5,
+      "productName": "مضخة ماء منزلية قوية وموثوقة",
+      "price": 999
+    }
+  ]
 }
