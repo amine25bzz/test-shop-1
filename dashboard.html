@@ -562,6 +562,9 @@ async function loadProductsCatalog(){
 }
 
 // ========== تحميل تلقائي للسجل التاريخي المحفوظ من data.json ==========
+// نفس منطق autoLoadProducts() فصفحة إدارة المنتجات: يجيب الملف تلقائياً
+// عند فتح الصفحة بلا أي تدخل، وإذا تعذر الوصول للملف (مثلاً مشكل شبكة)
+// كيرجع لآخر نسخة محفوظة فهذا المتصفح بدل ما يبقى فارغ.
 async function loadPersistedAnalytics(){
   try{
     const res = await fetch('data.json', { cache:'no-store' });
@@ -573,12 +576,30 @@ async function loadPersistedAnalytics(){
       clicks: Array.isArray(data.clicks) ? data.clicks : [],
       orders: Array.isArray(data.orders) ? data.orders : []
     };
+    try { localStorage.setItem('PLAS_data_cache', JSON.stringify(persistedAnalytics)); } catch(e){}
     const total = persistedAnalytics.visits.length + persistedAnalytics.product_views.length + persistedAnalytics.clicks.length + persistedAnalytics.orders.length;
     updateDataStatus(true, `${total} حدث محفوظ`);
   }catch(err){
-    console.warn('لا يوجد data.json بعد أو تعذر تحميله:', err.message);
-    persistedAnalytics = { visits:[], product_views:[], clicks:[], orders:[] };
-    updateDataStatus(false, 'لم يُنشأ بعد');
+    console.error('تعذر تحميل data.json:', err);
+    updateDataStatus(false, 'تعذر تحميل الملف');
+    // fallback لآخر نسخة محفوظة محلياً فهذا المتصفح، إن وُجدت
+    try{
+      const cached = localStorage.getItem('PLAS_data_cache');
+      if(cached){
+        const parsed = JSON.parse(cached);
+        persistedAnalytics = {
+          visits: Array.isArray(parsed.visits) ? parsed.visits : [],
+          product_views: Array.isArray(parsed.product_views) ? parsed.product_views : [],
+          clicks: Array.isArray(parsed.clicks) ? parsed.clicks : [],
+          orders: Array.isArray(parsed.orders) ? parsed.orders : []
+        };
+        updateDataStatus(true, 'نسخة محفوظة مؤقتاً (تعذر الوصول لأصل الملف)');
+      } else {
+        persistedAnalytics = { visits:[], product_views:[], clicks:[], orders:[] };
+      }
+    }catch(e){
+      persistedAnalytics = { visits:[], product_views:[], clicks:[], orders:[] };
+    }
   }
   render();
 }
