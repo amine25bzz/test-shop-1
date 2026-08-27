@@ -612,8 +612,11 @@ function PLASLog(key, data){
 }
 PLASLog(PLAS_KEYS.VISITS, { page: 'home' });
 
-// ============== منتجات مخزنة في localStorage (تضاف من صفحة home) ==============
-// التخزين: 'PLAS_products' -> array من المنتجات
+/* ============ المنتجات: تُحمّل تلقائياً من products.json ============
+   نحتفظ بنسخة مخزّنة في localStorage فقط كـ "ذاكرة تخزين مؤقت" لعرض
+   سريع عند فتح الصفحة، لكن المصدر الحقيقي هو ملف products.json الذي
+   يُجلب تلقائياً في كل مرة تُفتح فيها الصفحة عبر fetch().
+   ================================================================ */
 function loadProducts(){
   try{
     const data = localStorage.getItem('PLAS_products');
@@ -625,12 +628,24 @@ function saveProducts(products){
   try{ localStorage.setItem('PLAS_products', JSON.stringify(products)); }catch(e){}
 }
 
-// إذا كانت هناك منتجات محفوظة نستخدمها، وإلا نضع مصفوفة فارغة (تضاف من home)
+// نسخة أولية (قد تكون فارغة أو من تخزين مؤقت سابق) لعرض سريع قبل اكتمال fetch
 let products = loadProducts();
-if(!products || products.length === 0){
-  // نضع مصفوفة فارغة ولكن نضيف مثالًا واحدًا فقط للتوضيح، ولكن سيتم حذفه لاحقًا من home
-  products = [];
-  saveProducts(products);
+
+// جلب المنتجات الفعلية من products.json تلقائياً عند فتح الصفحة
+async function fetchAndCacheProducts(){
+  try{
+    const res = await fetch('products.json', { cache: 'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(Array.isArray(data)){
+      products = data;
+      saveProducts(data);
+      renderProducts();
+    }
+  }catch(err){
+    console.warn('تعذر تحميل products.json تلقائياً:', err);
+    // نبقي على أي نسخة مخزّنة مؤقتاً كانت معروضة أصلاً
+  }
 }
 
 // ============== بقية النظام ==============
@@ -651,7 +666,7 @@ function renderProducts(){
   const currentProducts = loadProducts();
   grid.innerHTML = '';
   if(!currentProducts || currentProducts.length === 0){
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--steel-400);font-size:15px;">لا توجد منتجات حالياً. أضف منتجاتك من صفحة الإدارة (home).</div>`;
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--steel-400);font-size:15px;">لا توجد منتجات حالياً.</div>`;
     return;
   }
   currentProducts.forEach(p => {
@@ -903,18 +918,18 @@ wishOverlay.addEventListener('click', closeWishDrawer);
 document.getElementById('cartBadge').textContent = cartCount();
 document.getElementById('wishlistBadge').textContent = wishlist.length;
 
-// ====== الاستماع لتحديث المنتجات من home ======
+// ====== الاستماع لتحديث المنتجات (مثلاً إن تم تعديلها محلياً من صفحة الإدارة في نفس المتصفح) ======
 window.addEventListener('storage', (e)=>{
   if(e.key === 'PLAS_products'){
     renderProducts();
   }
 });
 
-// العرض الأولي
+// العرض الأولي (سريع، من أي نسخة مخزّنة مؤقتاً)
 renderProducts();
 
-// نعطي إشارة أن الصفحة جاهزة لتلقي البيانات من home
-console.log('EL PLAS store ready — ستظهر المنتجات بمجرد إضافتها من صفحة home');
+// التحميل التلقائي الفعلي من products.json عند فتح الصفحة
+fetchAndCacheProducts();
 </script>
 </body>
 </html>
