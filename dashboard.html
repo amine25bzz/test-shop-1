@@ -345,7 +345,7 @@
     <div class="status-group">
       <span>
         <span class="dot red" id="statusDot"></span>
-        <span id="statusText">المنتجات: جارٍ التحميل من data.json...</span>
+        <span id="statusText">المنتجات: جارٍ التحميل من products.json...</span>
       </span>
       <span>
         <span class="dot red" id="dataStatusDot"></span>
@@ -486,14 +486,14 @@
 </div>
 
 <footer class="note">
-  المنتجات تُحمَّل تلقائياً من data.json. زيارات المتجر ونقراته وطلباته تُسجَّل تلقائياً في قاعدة بيانات Supabase من متصفح كل زائر، وتظهر هنا مباشرة ولحظياً بدون أي تدخل.
+  المنتجات تُحمَّل تلقائياً من products.json. زيارات المتجر ونقراته وطلباته تُسجَّل تلقائياً في قاعدة بيانات Supabase من متصفح كل زائر، وتظهر هنا مباشرة ولحظياً بدون أي تدخل.
 </footer>
 
 <!-- Supabase — نفس المشروع بالضبط المستعمل في index.html و index2.html -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 /* ================================================================
-   لوحة التحكم — تحميل تلقائي للمنتجات من data.json، وتحليل
+   لوحة التحكم — تحميل تلقائي للمنتجات من products.json، وتحليل
    الأداء (زيارات/نقرات/طلبات) يُقرأ مباشرة وبشكل حي من Supabase —
    تسجيل تلقائي من صفحات المتجر، وعرض تلقائي هنا فور حدوثه، بدون أي
    زر أو ملف يدوي.
@@ -539,17 +539,17 @@ function updateDataStatus(connected, msg = '') {
   }
 }
 
-// ========== تحميل تلقائي لكتالوج المنتجات من data.json ==========
+// ========== تحميل تلقائي لكتالوج المنتجات من products.json ==========
 async function loadProductsCatalog(){
   try{
-    const res = await fetch('data.json', { cache:'no-store' });
+    const res = await fetch('products.json', { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if(!Array.isArray(data)) throw new Error('صيغة غير صحيحة');
     products = data;
     updateFileStatus(true, `${products.length} منتج`);
   }catch(err){
-    console.error('تعذر تحميل data.json:', err);
+    console.error('تعذر تحميل products.json:', err);
     updateFileStatus(false, 'تعذر التحميل');
     products = [];
   }
@@ -733,7 +733,7 @@ function render(){
   document.getElementById('rangeLabel').textContent = 'إحصائيات ' + rangeLabels[range];
   document.getElementById('lastUpdate').textContent = 'آخر تحديث: ' + new Date().toLocaleTimeString('ar-MA');
 
-  // ===== أداء المنتجات (الكتالوج من data.json، الأحداث من data.json فقط) =====
+  // ===== أداء المنتجات (الكتالوج من products.json، الأحداث من data.json فقط) =====
   const perf = products.map(p => {
     const pViews = views.filter(v => Number(v.productId)===p.id).length;
     const pOrders = orders.filter(o => Number(o.productId)===p.id).length;
@@ -961,7 +961,7 @@ document.getElementById('aiChips').addEventListener('click', (e)=>{
   askAiAssistant(chip.dataset.q);
 });
 
-// ========== التحميل الأولي: تلقائي بالكامل — الكتالوج من data.json، والتحليلات مباشرة من Supabase ==========
+// ========== التحميل الأولي: تلقائي بالكامل — الكتالوج من products.json، والتحليلات مباشرة من Supabase ==========
 loadProductsCatalog();
 loadDataJson(); // يفعّل الاستماع الحي — كل حدث جديد يظهر فوراً بدون أي تحديث يدوي
 </script>
