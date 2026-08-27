@@ -311,7 +311,7 @@
       </div>
       <div class="brand-text">
         <h1>تحليل الاحداث</h1>
-        <span><span class="live-dot"></span> بيانات من data.json</span>
+        <span><span class="live-dot"></span> بيانات حية من قاعدة البيانات</span>
       </div>
     </div>
     <div class="header-actions">
@@ -325,13 +325,7 @@
         <button class="range-btn" data-range="30">آخر 30 يوم</button>
         <button class="range-btn" data-range="all">الكل</button>
       </div>
-      <button class="icon-action spin-on-click" id="refreshBtn" title="تحديث البيانات">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/></svg>
-      </button>
-      <button class="icon-action" id="exportBtn" title="تنزيل data.json المحدّث">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-      </button>
-      <button class="icon-action danger" id="resetBtn" title="مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح (المصدر المعروض هنا لا يتأثر)">
+      <button class="icon-action danger" id="resetBtn" title="حذف كل بيانات التحليلات نهائياً من قاعدة البيانات (لكل الزوار)">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
       </button>
     </div>
@@ -355,17 +349,16 @@
       </span>
       <span>
         <span class="dot red" id="dataStatusDot"></span>
-        <span id="dataStatusText">السجل المعروض (data.json): جارٍ التحميل...</span>
+        <span id="dataStatusText">التحليلات المباشرة: جارٍ الاتصال...</span>
       </span>
     </div>
-    <button class="btn-select" id="exportDataBtn">⬇️ تنزيل data.json المحدّث (يشمل أحداث هذا المتصفح)</button>
   </div>
 
   <div id="emptyBanner" class="empty-banner" style="display:none;">
     <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>
     <div>
-      <h3>لا توجد بيانات في data.json بعد</h3>
-      <p>هذه اللوحة تعرض <strong>فقط</strong> ما هو مسجّل في ملف <code>data.json</code> — لا تُقرأ أي بيانات من هذا المتصفح تلقائياً. لتحديث data.json: تصفّح المتجر وتفاعل مع المنتجات (هذا يسجّل الأحداث في متصفحك)، ثم اضغط زر "⬇️ تنزيل data.json المحدّث" هنا وارفع الملف الناتج إلى مستودع GitHub ليصبح هو المصدر الظاهر للجميع تلقائياً.</p>
+      <h3>لا توجد بيانات بعد</h3>
+      <p>بمجرد أن يزور أحد المتجر ويتفاعل مع المنتجات، ستظهر الأرقام هنا تلقائياً ولحظياً — بدون أي تحديث أو تدخل.</p>
     </div>
   </div>
 
@@ -459,7 +452,7 @@
         <div class="ai-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m6.8 6.8-2.8-2.8"/><path d="M2 12h4"/><path d="m6.8 17.2-2.8 2.8"/><path d="M12 18v4"/><path d="m17.2 17.2 2.8 2.8"/><path d="M18 12h4"/><path d="m17.2 6.8 2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg></div>
         <div>
           <h3>المساعد الذكي لتحليل المبيعات والسوق</h3>
-          <p>مدعوم بـ Gemini — يحلّل بيانات data.json الحقيقية ويقترح خطوات لزيادة المبيعات</p>
+          <p>مدعوم بـ Gemini — يحلّل بيانات المتجر الحية الحقيقية ويقترح خطوات لزيادة المبيعات</p>
         </div>
       </div>
       <button class="ai-btn" id="aiAnalyzeBtn">
@@ -472,7 +465,7 @@
     <div class="ai-body">
       <div class="ai-placeholder" id="aiPlaceholder">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m6.8 6.8-2.8-2.8"/><path d="M2 12h4"/><path d="m6.8 17.2-2.8 2.8"/><path d="M12 18v4"/><path d="m17.2 17.2 2.8 2.8"/><path d="M18 12h4"/><path d="m17.2 6.8 2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg>
-        <div>اضغط "تحليل ذكي الآن" ليقوم المساعد بفحص بيانات data.json وإعطائك تفسيرات وتوصيات عملية لزيادة المبيعات.</div>
+        <div>اضغط "تحليل ذكي الآن" ليقوم المساعد بفحص بيانات المتجر الحية وإعطائك تفسيرات وتوصيات عملية لزيادة المبيعات.</div>
       </div>
       <div class="ai-messages" id="aiMessages" style="display:none;"></div>
 
@@ -493,24 +486,28 @@
 </div>
 
 <footer class="note">
-  المنتجات تُحمَّل تلقائياً من products.json، وكل الأرقام المعروضة في هذه الصفحة (وتحليل الذكاء الاصطناعي) تُقرأ تلقائياً وفقط من ملف data.json عند فتح الصفحة — دون أي قراءة من هذا المتصفح.
-  الأحداث الجديدة (زيارات، نقرات، طلبات) تُسجَّل في متصفح كل زائر على حدة؛ لتظهر هذه الأحداث هنا ولدى بقية الزوار، اضغط بين الحين والآخر "⬇️ تنزيل data.json المحدّث" وارفع الملف الناتج إلى مستودع GitHub الخاص بالموقع.
+  المنتجات تُحمَّل تلقائياً من products.json. زيارات المتجر ونقراته وطلباته تُسجَّل تلقائياً في قاعدة بيانات Supabase من متصفح كل زائر، وتظهر هنا مباشرة ولحظياً بدون أي تدخل.
 </footer>
 
+<!-- Supabase — نفس المشروع بالضبط المستعمل في index.html و index2.html -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 /* ================================================================
-   لوحة التحكم — تحميل تلقائي للمنتجات من products.json، والعرض
-   وتحليل الذكاء الاصطناعي يعتمدان *فقط* على ما هو محفوظ في data.json
-   (لا قراءة تلقائية من localStorage للعرض). localStorage يُستعمل
-   فقط داخل زر "تنزيل data.json المحدّث" لتضمين أحداث هذا المتصفح
-   في النسخة التي سترفعها لاحقاً إلى GitHub.
+   لوحة التحكم — تحميل تلقائي للمنتجات من products.json، وتحليل
+   الأداء (زيارات/نقرات/طلبات) يُقرأ مباشرة وبشكل حي من Supabase —
+   تسجيل تلقائي من صفحات المتجر، وعرض تلقائي هنا فور حدوثه، بدون أي
+   زر أو ملف يدوي.
+   ⚠️ عوّض القيمتين أدناه بنفس إعدادات مشروعك في Supabase المستعملة في
+   index.html و index2.html بالضبط.
    ================================================================ */
-
-const PLAS_KEYS = {
-  VISITS: 'PLAS_analytics_visits',
-  PRODUCT_VIEWS: 'PLAS_analytics_product_views',
-  CLICKS: 'PLAS_analytics_clicks',
-  ORDERS: 'PLAS_analytics_orders'
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const PLAS_TYPES = {
+  VISITS: 'visit',
+  PRODUCT_VIEWS: 'product_view',
+  CLICKS: 'click',
+  ORDERS: 'order'
 };
 
 let products = [];
@@ -535,10 +532,10 @@ function updateDataStatus(connected, msg = '') {
   const text = document.getElementById('dataStatusText');
   if (connected) {
     dot.className = 'dot green';
-    text.textContent = '✅ السجل المعروض (data.json): ' + msg;
+    text.textContent = '✅ التحليلات: ' + msg;
   } else {
     dot.className = 'dot red';
-    text.textContent = '⚠️ السجل المعروض (data.json): ' + (msg || 'غير موجود بعد');
+    text.textContent = '⚠️ التحليلات: ' + (msg || 'غير موجود بعد');
   }
 }
 
@@ -559,29 +556,65 @@ async function loadProductsCatalog(){
   render();
 }
 
-// ========== تحميل تلقائي وحصري لبيانات data.json (المصدر الوحيد للعرض) ==========
-async function loadDataJson(){
-  try{
-    const res = await fetch('data.json', { cache:'no-store' });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    dataJson = {
-      visits: Array.isArray(data.visits) ? data.visits : [],
-      product_views: Array.isArray(data.product_views) ? data.product_views : [],
-      clicks: Array.isArray(data.clicks) ? data.clicks : [],
-      orders: Array.isArray(data.orders) ? data.orders : []
-    };
+// ========== قراءة حيّة ومباشرة من Supabase — تسجيل تلقائي وعرض تلقائي، بدون أي زر أو رفع ملف ==========
+function rowToEvent(row){
+  return {
+    ts: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
+    productId: row.product_id,
+    productName: row.product_name,
+    price: row.price,
+    action: row.action
+  };
+}
+
+async function fetchAllEvents(){
+  const { data, error } = await supabaseClient
+    .from('events')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if(error){
+    console.error('تعذر تحميل الأحداث من Supabase:', error.message);
+    updateDataStatus(false, 'تعذر الاتصال بقاعدة البيانات');
     dataJsonLoaded = true;
-    const total = dataJson.visits.length + dataJson.product_views.length + dataJson.clicks.length + dataJson.orders.length;
-    updateDataStatus(true, `${total} حدث`);
-  }catch(err){
-    console.warn('لا يوجد data.json بعد أو تعذر تحميله:', err.message);
-    dataJson = { visits:[], product_views:[], clicks:[], orders:[] };
-    dataJsonLoaded = true;
-    updateDataStatus(false, 'لم يُنشأ بعد');
+    render();
+    return;
   }
+
+  const grouped = { visits:[], product_views:[], clicks:[], orders:[] };
+  (data || []).forEach(row => {
+    const ev = rowToEvent(row);
+    if(row.type === PLAS_TYPES.VISITS) grouped.visits.push(ev);
+    else if(row.type === PLAS_TYPES.PRODUCT_VIEWS) grouped.product_views.push(ev);
+    else if(row.type === PLAS_TYPES.CLICKS) grouped.clicks.push(ev);
+    else if(row.type === PLAS_TYPES.ORDERS) grouped.orders.push(ev);
+  });
+  dataJson = grouped;
+  dataJsonLoaded = true;
+  const total = grouped.visits.length + grouped.product_views.length + grouped.clicks.length + grouped.orders.length;
+  updateDataStatus(true, `${total} حدث (مباشر)`);
   render();
 }
+
+let realtimeSubscribed = false;
+function subscribeRealtime(){
+  if(realtimeSubscribed) return;
+  realtimeSubscribed = true;
+  // أي إضافة/حذف جديد في جدول events (من أي زائر في أي مكان) يعيد تحميل الأرقام هنا فوراً بدون أي تدخل
+  supabaseClient
+    .channel('events-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'events' }, () => {
+      fetchAllEvents();
+    })
+    .subscribe();
+}
+
+// تُبقى بنفس الاسم حتى لا تحتاج بقية الكود لأي تعديل إضافي
+function loadDataJson(){
+  fetchAllEvents();
+  subscribeRealtime();
+}
+
 
 let currentRange = '7';
 
@@ -753,54 +786,12 @@ document.getElementById('rangeGroup').addEventListener('click', (e)=>{
   render();
 });
 
-document.getElementById('refreshBtn').addEventListener('click', (e)=>{
-  const svg = e.currentTarget.querySelector('svg');
-  svg.style.transform = 'rotate(360deg)';
-  setTimeout(()=> svg.style.transform='rotate(0deg)', 500);
-  loadProductsCatalog();
-  loadDataJson();
-});
-
-// ========== دمج أحداث هذا المتصفح (localStorage) مع data.json الحالي — فقط عند التصدير ==========
-function dedupeEvents(arr){
-  const seen = new Set();
-  const out = [];
-  arr.forEach(e=>{
-    const k = JSON.stringify(e);
-    if(!seen.has(k)){ seen.add(k); out.push(e); }
-  });
-  return out;
-}
-function localArr(key){
-  try{ const v = JSON.parse(localStorage.getItem(key) || '[]'); if(Array.isArray(v)) return v; }catch(e){}
-  return [];
-}
-function mergedForExport(persistedArr, key){
-  return dedupeEvents([...persistedArr, ...localArr(key)]).sort((a,b)=>(toTs(a)||0)-(toTs(b)||0));
-}
-
-function downloadDataJson(){
-  const data = {
-    exported_at: new Date().toISOString(),
-    visits: mergedForExport(dataJson.visits, PLAS_KEYS.VISITS),
-    product_views: mergedForExport(dataJson.product_views, PLAS_KEYS.PRODUCT_VIEWS),
-    clicks: mergedForExport(dataJson.clicks, PLAS_KEYS.CLICKS),
-    orders: mergedForExport(dataJson.orders, PLAS_KEYS.ORDERS)
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'data.json';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-document.getElementById('exportBtn').addEventListener('click', downloadDataJson);
-document.getElementById('exportDataBtn').addEventListener('click', downloadDataJson);
-
+// لا حاجة لزر تحديث: الاستماع الحي من Supabase يحدّث الأرقام لحظياً بمجرد وقوع أي حدث جديد.
 document.getElementById('resetBtn').addEventListener('click', ()=>{
-  if(confirm('هل أنت متأكد من مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح فقط؟ هذا لن يغيّر ملف data.json المعروض حالياً — فقط سيمسح الأحداث التي لم يتم تصديرها بعد من هذا الجهاز. هذا الإجراء لا يمكن التراجع عنه.')){
-    Object.values(PLAS_KEYS).forEach(k => localStorage.removeItem(k));
+  if(confirm('هل أنت متأكد من حذف كل بيانات التحليلات (زيارات، مشاهدات، نقرات، طلبات) نهائياً من قاعدة البيانات؟ هذا سيؤثر على كل الزوار ولا يمكن التراجع عنه.')){
+    supabaseClient.from('events').delete().gt('id', 0).then(({error})=>{
+      if(error) console.error('تعذر حذف البيانات:', error.message);
+    });
   }
 });
 
@@ -970,11 +961,9 @@ document.getElementById('aiChips').addEventListener('click', (e)=>{
   askAiAssistant(chip.dataset.q);
 });
 
-// ========== التحميل الأولي: تلقائي بالكامل، مصدره الوحيد products.json و data.json ==========
+// ========== التحميل الأولي: تلقائي بالكامل — الكتالوج من products.json، والتحليلات مباشرة من Supabase ==========
 loadProductsCatalog();
-loadDataJson();
-
-setInterval(()=>{ loadDataJson(); }, 30000);
+loadDataJson(); // يفعّل الاستماع الحي — كل حدث جديد يظهر فوراً بدون أي تحديث يدوي
 </script>
 </body>
 </html>
