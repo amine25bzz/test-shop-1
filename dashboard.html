@@ -279,16 +279,6 @@
   .file-status-banner .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-left:6px;}
   .file-status-banner .dot.green{background:var(--ok-500);}
   .file-status-banner .dot.red{background:var(--danger-500);}
-  .file-status-banner .btn-select{
-    background:var(--amber-500);
-    color:#fff;
-    padding:6px 16px;
-    border-radius:8px;
-    font-weight:700;
-    font-size:12px;
-    transition:.2s;
-  }
-  .file-status-banner .btn-select:hover{background:var(--amber-600);}
 
   @media(max-width:1180px){
     .kpi-grid{grid-template-columns:repeat(3,1fr);}
@@ -351,7 +341,6 @@
       <span class="dot red" id="statusDot"></span>
       <span id="statusText">المنتجات: جارٍ التحميل...</span>
     </span>
-    <button class="btn-select" id="selectFileBtn">📂 اختيار ملف products.json</button>
   </div>
 
   <div id="emptyBanner" class="empty-banner" style="display:none;">
@@ -486,13 +475,16 @@
 </div>
 
 <footer class="note">
-  البيانات معروضة مباشرة من localStorage الخاص بمتصفحك ولا تُرسل لأي خادم خارجي.
+  بيانات الأحداث (الزيارات، المشاهدات، النقرات، الطلبات) معروضة مباشرة من localStorage الخاص بمتصفحك ولا تُرسل لأي خادم خارجي. أما قائمة المنتجات فتُحمّل تلقائياً من ملف products.json.
 </footer>
 
 <script>
 /* ================================================================
-   لوحة التحكم — تستخدم File System Access API لقراءة المنتجات
-   والبيانات التحليلية من localStorage
+   لوحة التحكم — قائمة المنتجات تُحمّل تلقائياً من products.json
+   (بدون localStorage وبدون اختيار ملف يدوي).
+   بيانات الأحداث التحليلية (زيارات/مشاهدات/نقرات/طلبات) تبقى
+   مقروءة من localStorage لأنها سجل تفاعلات حقيقي وليست جزءاً
+   من كتالوج المنتجات.
    ================================================================ */
 
 const PLAS_KEYS = {
@@ -502,10 +494,9 @@ const PLAS_KEYS = {
   ORDERS: 'PLAS_analytics_orders'
 };
 
-let fileHandle = null;
 let products = [];
 
-// ========== تحديث حالة الملف ==========
+// ========== تحديث حالة المنتجات ==========
 function updateFileStatus(connected, msg = '') {
   const dot = document.getElementById('statusDot');
   const text = document.getElementById('statusText');
@@ -518,75 +509,35 @@ function updateFileStatus(connected, msg = '') {
   }
 }
 
-// ========== قراءة المنتجات من الملف ==========
-async function readProductsFromFile() {
-  if (!fileHandle) {
-    updateFileStatus(false, 'لم يتم اختيار ملف');
-    return [];
-  }
+// ========== تحميل المنتجات تلقائياً من products.json ==========
+async function fetchProductsCatalog() {
   try {
-    const file = await fileHandle.getFile();
-    const text = await file.text();
-    const data = JSON.parse(text);
+    const res = await fetch('products.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
     if (Array.isArray(data)) {
       products = data;
-      try{ localStorage.setItem('PLAS_products', JSON.stringify(data)); }catch(e){}
       updateFileStatus(true, `${products.length} منتج`);
       render();
-      return products;
-    } else {
-      throw new Error('الملف لا يحتوي على مصفوفة');
+      return;
     }
+    throw new Error('الملف لا يحتوي على مصفوفة');
   } catch (err) {
-    console.error('خطأ في قراءة الملف:', err);
-    updateFileStatus(false, 'خطأ في القراءة');
-    return [];
+    console.error('تعذر تحميل products.json:', err);
+    products = [];
+    updateFileStatus(false, 'تعذر تحميل products.json');
+    render();
   }
 }
 
-// ========== اختيار الملف ==========
-async function selectFile() {
-  try {
-    const [handle] = await window.showOpenFilePicker({
-      types: [{
-        description: 'JSON files',
-        accept: { 'application/json': ['.json'] },
-      }],
-      multiple: false,
-    });
-    if (handle) {
-      fileHandle = handle;
-      const opts = { mode: 'readwrite' };
-      const permission = await fileHandle.requestPermission(opts);
-      if (permission === 'granted') {
-        await readProductsFromFile();
-      } else {
-        updateFileStatus(false, 'تم رفض الإذن');
-      }
-    }
-  } catch (err) {
-    if (err.name !== 'AbortError') {
-      console.error('خطأ في اختيار الملف:', err);
-    }
-  }
-}
-
-document.getElementById('selectFileBtn').addEventListener('click', selectFile);
-
-// ========== تحميل المصفوفات ==========
+// ========== تحميل المصفوفات (أحداث التحليلات فقط) ==========
 function loadArr(key){
   try{ const v = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(v) ? v : []; }
   catch(e){ return []; }
 }
 
 function getProductsCatalog(){
-  return products.length > 0 ? products : (() => {
-    try{
-      const cached = localStorage.getItem('PLAS_products');
-      if(cached){ const p = JSON.parse(cached); if(Array.isArray(p)) return p; }
-    }catch(e){}
-    return [];
-  })();
+  return products;
 }
 
 let currentRange = '7';
@@ -748,7 +699,7 @@ document.getElementById('refreshBtn').addEventListener('click', (e)=>{
   const svg = e.currentTarget.querySelector('svg');
   svg.style.transform = 'rotate(360deg)';
   setTimeout(()=> svg.style.transform='rotate(0deg)', 500);
-  render();
+  fetchProductsCatalog();
 });
 
 document.getElementById('exportBtn').addEventListener('click', ()=>{
@@ -941,31 +892,14 @@ document.getElementById('aiChips').addEventListener('click', (e)=>{
   askAiAssistant(chip.dataset.q);
 });
 
-// ========== التحميل الأولي ==========
-if (!('showOpenFilePicker' in window)) {
-  updateFileStatus(false, 'المتصفح غير مدعوم (يُفضل Chrome/Edge)');
-} else {
-  updateFileStatus(false, 'اختر ملف products.json');
-}
-
-// محاولة استعادة المنتجات من localStorage
-try{
-  const cached = localStorage.getItem('PLAS_products');
-  if(cached){
-    const parsed = JSON.parse(cached);
-    if(Array.isArray(parsed) && parsed.length > 0){
-      products = parsed;
-      updateFileStatus(false, `${products.length} منتج مخزن مؤقتاً`);
-    }
-  }
-}catch(e){}
-
-render();
+// ========== التحميل الأولي: تلقائي من products.json فقط ==========
+render(); // عرض أولي لأحداث التحليلات فور فتح الصفحة (بدون انتظار المنتجات)
+fetchProductsCatalog(); // يجلب المنتجات من products.json ثم يعيد render()
 
 window.addEventListener('storage', (e)=>{
-  if(Object.values(PLAS_KEYS).includes(e.key) || e.key === 'PLAS_products') render();
+  if(Object.values(PLAS_KEYS).includes(e.key)) render();
 });
-setInterval(render, 20000);
+setInterval(()=>{ fetchProductsCatalog(); }, 20000);
 </script>
 </body>
 </html>
