@@ -373,6 +373,15 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast svg{width:17px;height:17px;stroke:var(--ok-500);fill:none;stroke-width:2;}
 
+  /* connect data.json button */
+  #plasConnectBtn{
+    position:fixed;bottom:20px;right:20px;z-index:250;
+    background:var(--navy-950);color:#fff;font-size:12.5px;font-weight:700;
+    padding:10px 16px;border-radius:999px;box-shadow:var(--shadow-lg);
+    display:flex;align-items:center;gap:8px;
+  }
+  #plasConnectBtn:hover{background:var(--amber-600);}
+
   @media(max-width:1024px){
     .grid{grid-template-columns:repeat(2,1fr);}
     .trust-grid{grid-template-columns:repeat(2,1fr);}
@@ -594,22 +603,155 @@
   <span id="toastMsg">تمت الإضافة إلى السلة</span>
 </div>
 
+<button id="plasConnectBtn" style="display:none;">🔗 ربط data.json لتسجيل الأحداث</button>
+
 <script>
-/* ============ EL PLAS — نظام تتبع التحليلات الحقيقي ============ */
+/* ============ EL PLAS — تسجيل التحليلات مباشرة في data.json ============
+   يكتب الأحداث (زيارات/نقرات/طلبات) مباشرة داخل ملف data.json المحلي
+   عبر File System Access API، بدل التخزين في localStorage.
+   ملاحظة تقنية إلزامية: هذا يتطلب ربط الملف مرة واحدة بالضغط على الزر
+   الظاهر أسفل الصفحة (مطلوب من كل متصفح لأسباب أمنية في المتصفح نفسه؛
+   لا توجد طريقة تجعل أي متصفح يكتب في ملف على القرص بدون إذن المستخدم).
+   ================================================================ */
 const PLAS_KEYS = {
-  VISITS: 'PLAS_analytics_visits',
-  PRODUCT_VIEWS: 'PLAS_analytics_product_views',
-  CLICKS: 'PLAS_analytics_clicks',
-  ORDERS: 'PLAS_analytics_orders'
+  VISITS: 'visits',
+  PRODUCT_VIEWS: 'product_views',
+  CLICKS: 'clicks',
+  ORDERS: 'orders'
 };
-function PLASLog(key, data){
+
+const PLAS_DB_NAME = 'PLAS_fs_db';
+const PLAS_DB_STORE = 'handles';
+const PLAS_HANDLE_KEY = 'data_json_handle';
+
+function plasOpenDb(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open(PLAS_DB_NAME, 1);
+    req.onupgradeneeded = ()=> req.result.createObjectStore(PLAS_DB_STORE);
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+async function plasGetHandle(){
   try{
-    const arr = JSON.parse(localStorage.getItem(key) || '[]');
-    arr.push(Object.assign({ ts: Date.now() }, data));
-    if(arr.length > 5000) arr.splice(0, arr.length - 5000);
-    localStorage.setItem(key, JSON.stringify(arr));
+    const db = await plasOpenDb();
+    return await new Promise((resolve,reject)=>{
+      const tx = db.transaction(PLAS_DB_STORE,'readonly');
+      const req = tx.objectStore(PLAS_DB_STORE).get(PLAS_HANDLE_KEY);
+      req.onsuccess = ()=> resolve(req.result || null);
+      req.onerror = ()=> reject(req.error);
+    });
+  }catch(e){ return null; }
+}
+async function plasSetHandle(handle){
+  try{
+    const db = await plasOpenDb();
+    return await new Promise((resolve,reject)=>{
+      const tx = db.transaction(PLAS_DB_STORE,'readwrite');
+      tx.objectStore(PLAS_DB_STORE).put(handle, PLAS_HANDLE_KEY);
+      tx.oncomplete = ()=> resolve(true);
+      tx.onerror = ()=> reject(tx.error);
+    });
+  }catch(e){ return false; }
+}
+
+let plasFileHandle = null;
+let plasWriteQueue = [];
+let plasWriting = false;
+
+async function plasEnsurePermission(handle){
+  try{
+    const opts = { mode:'readwrite' };
+    if((await handle.queryPermission(opts)) === 'granted') return true;
+    if((await handle.requestPermission(opts)) === 'granted') return true;
+  }catch(e){}
+  return false;
+}
+
+function plasShowConnectBtn(){
+  const btn = document.getElementById('plasConnectBtn');
+  if(btn) btn.style.display = 'flex';
+}
+function plasHideConnectBtn(){
+  const btn = document.getElementById('plasConnectBtn');
+  if(btn) btn.style.display = 'none';
+}
+
+async function plasInitFileHandle(){
+  if(!('showOpenFilePicker' in window)){ return; }
+  plasFileHandle = await plasGetHandle();
+  if(plasFileHandle){
+    const ok = await plasEnsurePermission(plasFileHandle);
+    if(ok){ plasHideConnectBtn(); plasFlushQueue(); return; }
+  }
+  plasShowConnectBtn();
+}
+
+async function plasConnectFile(){
+  if(!('showOpenFilePicker' in window)){
+    alert('متصفحك لا يدعم الكتابة المباشرة في الملفات. استعمل Chrome أو Edge على الحاسوب.');
+    return;
+  }
+  try{
+    const [handle] = await window.showOpenFilePicker({
+      types:[{ description:'JSON', accept:{'application/json':['.json']} }],
+      excludeAcceptAllOption:false, multiple:false
+    });
+    const ok = await plasEnsurePermission(handle);
+    if(ok){
+      plasFileHandle = handle;
+      await plasSetHandle(handle);
+      plasHideConnectBtn();
+      plasFlushQueue();
+    }
   }catch(e){}
 }
+document.getElementById('plasConnectBtn').addEventListener('click', plasConnectFile);
+
+async function plasReadCurrentData(){
+  const empty = { visits:[], product_views:[], clicks:[], orders:[] };
+  if(!plasFileHandle) return empty;
+  try{
+    const file = await plasFileHandle.getFile();
+    const text = await file.text();
+    if(!text.trim()) return empty;
+    const data = JSON.parse(text);
+    return {
+      visits: Array.isArray(data.visits)?data.visits:[],
+      product_views: Array.isArray(data.product_views)?data.product_views:[],
+      clicks: Array.isArray(data.clicks)?data.clicks:[],
+      orders: Array.isArray(data.orders)?data.orders:[]
+    };
+  }catch(e){ return empty; }
+}
+
+async function plasFlushQueue(){
+  if(plasWriting || !plasFileHandle || plasWriteQueue.length===0) return;
+  plasWriting = true;
+  const batch = plasWriteQueue.splice(0, plasWriteQueue.length);
+  try{
+    const current = await plasReadCurrentData();
+    batch.forEach(ev => {
+      if(current[ev.bucket]) current[ev.bucket].push(ev.data);
+    });
+    current.exported_at = new Date().toISOString();
+    const writable = await plasFileHandle.createWritable();
+    await writable.write(JSON.stringify(current, null, 2));
+    await writable.close();
+  }catch(e){
+    plasWriteQueue = batch.concat(plasWriteQueue);
+  }
+  plasWriting = false;
+  if(plasWriteQueue.length>0) setTimeout(plasFlushQueue, 800);
+}
+
+function PLASLog(bucket, data){
+  const event = Object.assign({ ts: Date.now() }, data);
+  plasWriteQueue.push({ bucket, data: event });
+  plasFlushQueue();
+}
+
+plasInitFileHandle();
 PLASLog(PLAS_KEYS.VISITS, { page: 'home' });
 
 /* ============ المنتجات: تُحمّل تلقائياً من products.json ============
