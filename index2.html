@@ -267,39 +267,54 @@ function PLASLog(key, data){
   }catch(e){}
 }
 
-// تحميل المنتجات من localStorage (نفس مصدر البيانات)
-function loadProducts(){
+const WHATSAPP_NUMBER = "212715072766";
+
+/* ============ كتالوج المنتجات: يُجلب تلقائياً من products.json ============
+   هذه الصفحة قد تُفتح مباشرة (رابط منتج مشارك) بدون المرور أولاً بالصفحة
+   الرئيسية، لذلك لا يمكن الاعتماد فقط على نسخة localStorage المخزّنة مسبقاً.
+   نجلب products.json مباشرة عند فتح الصفحة، ونستخدم النسخة المخزّنة مؤقتاً
+   فقط كحل احتياطي إن تعذّر الوصول للملف (بدون إنترنت مثلاً).
+   ================================================================ */
+async function fetchProductsCatalog(){
   try{
-    const data = localStorage.getItem('PLAS_products');
-    if(data) return JSON.parse(data);
+    const res = await fetch('products.json', { cache: 'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(Array.isArray(data)){
+      try{ localStorage.setItem('PLAS_products', JSON.stringify(data)); }catch(e){}
+      return data;
+    }
+    throw new Error('صيغة غير صحيحة');
+  }catch(err){
+    console.warn('تعذر تحميل products.json تلقائياً، سيتم استخدام أي نسخة محفوظة مؤقتاً:', err);
+  }
+  try{
+    const cached = localStorage.getItem('PLAS_products');
+    if(cached){
+      const parsed = JSON.parse(cached);
+      if(Array.isArray(parsed)) return parsed;
+    }
   }catch(e){}
   return [];
 }
-
-// دالة للحصول على منتج حسب ID
-function getProduct(id){
-  const all = loadProducts();
-  return all.find(p => p.id === Number(id));
-}
-
-const WHATSAPP_NUMBER = "212715072766";
 
 const params = new URLSearchParams(window.location.search);
 let selectedId = params.get('id');
 if(!selectedId){
   try{ selectedId = localStorage.getItem('teckline_selected_product'); }catch(e){}
 }
-const product = getProduct(selectedId);
 const content = document.getElementById('content');
 
-if(!product){
+function renderEmptyState(){
   content.innerHTML = `
     <div class="empty-state">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
       <p>لم يتم اختيار منتج بعد، أو أن المنتج غير موجود.</p>
       <a href="index.html">تصفح المنتجات</a>
     </div>`;
-} else {
+}
+
+function renderProductPage(product){
   // تسجيل زيارة حقيقية لصفحة تفاصيل هذا المنتج
   PLASLog(PLAS_KEYS.PRODUCT_VIEWS, { productId: Number(selectedId), productName: product.name });
 
@@ -317,7 +332,6 @@ if(!product){
   const starsStr = n => "★".repeat(n) + "☆".repeat(5-n);
 
   // نقاط البيع (بيع) افتراضية إذا لم تكن موجودة
-  // نقاط البيع (بيع) افتراضية إذا لم تكن موجودة
   const defaultSellPoints = [
     { title:"جودة مضمونة", desc:"منتج أصلي 100% مع ضمان استرجاع يمنحك راحة البال", icon:"<path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/><path d='m9 12 2 2 4-4'/>" },
     { title:"توصيل سريع", desc:"نوصل طلبك إلى باب منزلك أينما كنت في أسرع وقت ممكن", icon:"<rect x='1' y='7' width='15' height='10' rx='1'/><path d='M16 10h4l3 3v4h-7z'/><circle cx='6' cy='19' r='2'/><circle cx='18' cy='19' r='2'/>" },
@@ -327,13 +341,12 @@ if(!product){
   // استخدام نقاط البيع من المنتج أو الافتراضية
   const sellPoints = product.sellPoints || defaultSellPoints;
   // وصف طويل افتراضي
-  const longDesc = product.longDesc || `عند طلب <strong>${product.name}</strong> من متجرنا، أنت تختار تجربة تسوّق موثوقة من البداية إلى النهاية. نحرص على جودة كل منتج نعرضه، ونوفّر لك توصيلاً سريعاً أينما كنت، مع خاصية الدفع عند الاستلام لتضمن راحة بالك وثقتك الكاملة قبل إتمام الشراء.`;  // مميزات افتراضية
+  const longDesc = product.longDesc || `عند طلب <strong>${product.name}</strong> من متجرنا، أنت تختار تجربة تسوّق موثوقة من البداية إلى النهاية. نحرص على جودة كل منتج نعرضه، ونوفّر لك توصيلاً سريعاً أينما كنت، مع خاصية الدفع عند الاستلام لتضمن راحة بالك وثقتك الكاملة قبل إتمام الشراء.`;
   // مميزات افتراضية
   const features = product.features || [
     { tag:"الثقة", title:"منتج أصلي بضمان كامل", desc:"نختار منتجاتنا بعناية فائقة لنقدم لك جودة تستحق ثقتك، مع إمكانية الإرجاع إذا لم يعجبك." },
     { tag:"التوصيل", title:"يصلك أينما كنت بسرعة", desc:"فريقنا يعمل على تجهيز وشحن طلبك في أسرع وقت، مع تتبع مستمر حتى وصوله إليك." }
   ];
-  // خطوات الاستخدام
   // خطوات الطلب والتوصيل
   const usage = product.usage || [
     "اطلب المنتج بسهولة عبر الموقع، أو تواصل معنا مباشرة عبر واتساب وسنرد عليك فوراً.",
@@ -547,10 +560,20 @@ if(!product){
         showToast('تمت الإضافة إلى المفضلة');
       }
       try{ localStorage.setItem('teckline_wishlist_v1', JSON.stringify(wishlist2)); }catch(e){}
-      // تحديث العدد في الصفحة الرئيسية (سيتم تحديثه عند العودة)
     });
   }
 }
+
+async function init(){
+  const allProducts = await fetchProductsCatalog();
+  const product = allProducts.find(p => p.id === Number(selectedId));
+  if(!product){
+    renderEmptyState();
+  } else {
+    renderProductPage(product);
+  }
+}
+init();
 
 function showToast(msg){
   // نستخدم toast موجود في الصفحة الرئيسية، أو ننشئ واحداً مؤقتاً
