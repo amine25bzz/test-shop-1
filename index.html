@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> EL PLAS Cosmetics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#0b1220;
+    --navy-900:#0f1a2e;
+    --navy-800:#16233d;
+    --navy-700:#1e2f4d;
+    --steel-300:#c7d0de;
+    --steel-400:#93a1b8;
+    --amber-400:#f5a524;
+    --amber-500:#e8940f;
+    --amber-600:#c97a08;
+    --ok-500:#2fbf71;
+    --danger-500:#e5484d;
+    --paper:#f6f7fb;
+    --card-bg:#ffffff;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --shadow-sm:0 2px 8px rgba(15,26,46,0.06);
+    --shadow-md:0 8px 24px rgba(15,26,46,0.10);
+    --shadow-lg:0 20px 50px rgba(15,26,46,0.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Tajawal','Almarai',sans-serif;
+    background:var(--paper);
+    color:var(--navy-900);
+    min-height:100vh;
+  }
+  img{display:block;max-width:100%;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;}
+  ul{list-style:none;}
+
+  /* ===== Top utility bar ===== */
+  .topbar{
+    background:var(--navy-950);
+    color:var(--steel-400);
+    font-size:13px;
+    padding:8px 0;
+  }
+  .topbar .wrap{
+    max-width:1240px;margin:0 auto;padding:0 24px;
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:8px;
+  }
+  .topbar .right-links{display:flex;gap:18px;}
+  .topbar .right-links span{display:flex;align-items:center;gap:6px;}
+
+  /* ===== Header ===== */
+  header{
+    background:linear-gradient(180deg,var(--navy-900) 0%, var(--navy-800) 100%);
+    position:sticky;top:0;z-index:100;
+    box-shadow:var(--shadow-md);
+  }
+  .header-main{
+    max-width:1240px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;gap:28px;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-weight:900;font-size:24px;color:#fff;flex-shrink:0;
+  }
+  .logo .dot{color:var(--amber-400);}
+  .logo-badge{
+    width:38px;height:38px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .logo-badge svg{width:20px;height:20px;stroke:var(--navy-950);}
+
+  .search-wrap{
+    flex:1;display:flex;background:#fff;border-radius:10px;overflow:hidden;
+    box-shadow:var(--shadow-sm);
+  }
+  .search-wrap select{
+    border:none;background:var(--paper);color:var(--navy-800);
+    padding:0 14px;font-size:13px;font-family:inherit;border-left:1px solid #e3e6ee;
+  }
+  .search-wrap input{
+    flex:1;border:none;outline:none;padding:12px 16px;font-size:14px;font-family:inherit;color:var(--navy-900);
+  }
+  .search-wrap button{
+    background:var(--amber-500);color:#fff;padding:0 20px;
+    display:flex;align-items:center;justify-content:center;transition:.2s;
+  }
+  .search-wrap button:hover{background:var(--amber-600);}
+  .search-wrap button svg{width:19px;height:19px;stroke:#fff;fill:none;}
+
+  .header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .icon-btn{
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    color:var(--steel-300);padding:8px 12px;border-radius:10px;
+    transition:.2s;position:relative;
+  }
+  .icon-btn:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  .icon-btn svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;}
+  .icon-btn .lbl{font-size:11px;font-weight:500;}
+  .cart-badge{
+    position:absolute;top:2px;left:2px;
+    background:var(--amber-500);color:#fff;
+    font-size:11px;font-weight:800;
+    min-width:18px;height:18px;border-radius:999px;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 4px;border:2px solid var(--navy-800);
+    transition:transform .25s;
+  }
+  .cart-badge.bump{animation:bump .35s ease;}
+  @keyframes bump{0%{transform:scale(1);}40%{transform:scale(1.4);}100%{transform:scale(1);}}
+
+  /* ===== category nav ===== */
+  .catnav{
+    background:var(--navy-700);
+    border-top:1px solid rgba(255,255,255,0.06);
+  }
+  .catnav .wrap{
+    max-width:1240px;margin:0 auto;padding:0 24px;
+    display:flex;gap:6px;overflow-x:auto;
+  }
+  .catnav a{
+    color:var(--steel-300);font-size:14px;font-weight:500;
+    padding:12px 16px;white-space:nowrap;border-bottom:3px solid transparent;
+    transition:.2s;
+  }
+  .catnav a:hover, .catnav a.active{color:#fff;border-bottom-color:var(--amber-400);}
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:1240px;margin:28px auto 0;padding:0 24px;
+  }
+  .hero-banner{
+    background:linear-gradient(120deg,var(--navy-900) 0%,var(--navy-700) 65%, var(--amber-600) 160%);
+    border-radius:var(--radius-lg);
+    padding:44px 40px;color:#fff;
+    display:flex;align-items:center;justify-content:space-between;
+    box-shadow:var(--shadow-md);
+    overflow:hidden;position:relative;
+  }
+  .hero-banner::after{
+    content:"";position:absolute;left:-60px;top:-60px;width:260px;height:260px;
+    background:radial-gradient(circle,rgba(245,165,36,0.35),transparent 70%);
+  }
+  .hero-text h1{font-size:30px;font-weight:900;margin-bottom:10px;}
+  .hero-text p{color:var(--steel-300);font-size:15px;max-width:440px;line-height:1.8;}
+  .hero-text .cta{
+    display:inline-block;margin-top:18px;background:var(--amber-500);
+    color:#fff;padding:12px 26px;border-radius:10px;font-weight:700;font-size:14px;
+    transition:.2s;
+  }
+  .hero-text .cta:hover{background:var(--amber-600);transform:translateY(-2px);}
+
+  /* ===== Section title ===== */
+  .section{max-width:1240px;margin:0 auto;padding:44px 24px 0;}
+  .section-head{
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;
+  }
+  .section-head h2{font-size:22px;font-weight:800;color:var(--navy-900);}
+  .section-head .eyebrow{
+    color:var(--amber-600);font-weight:700;font-size:12.5px;letter-spacing:.3px;
+    display:block;margin-bottom:4px;
+  }
+  .section-head a.view-all{font-size:13.5px;font-weight:700;color:var(--navy-700);}
+  .section-head a.view-all:hover{color:var(--amber-600);}
+
+  /* ===== Product grid ===== */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+  }
+  .card{
+    background:var(--card-bg);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-sm);
+    display:flex;flex-direction:column;
+    overflow:hidden;
+    transition:transform .25s, box-shadow .25s;
+    border:1px solid #ecedf3;
+  }
+  .card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+  .card-media{
+    position:relative;
+    aspect-ratio:1/1;
+    background:#f0f2f7;
+    display:flex;align-items:center;justify-content:center;
+    padding:14px;
+  }
+  .card-media img{width:100%;height:100%;object-fit:contain;}
+  .badge{
+    position:absolute;top:12px;right:12px;
+    background:var(--ok-500);color:#fff;font-size:11px;font-weight:800;
+    padding:4px 10px;border-radius:999px;
+  }
+  .badge.sale{background:var(--danger-500);}
+  .wishlist-btn{
+    position:absolute;top:12px;left:12px;
+    width:34px;height:34px;border-radius:50%;
+    background:#fff;box-shadow:var(--shadow-sm);
+    display:flex;align-items:center;justify-content:center;
+    transition:.2s;
+  }
+  .wishlist-btn svg{width:17px;height:17px;stroke:var(--navy-700);fill:none;stroke-width:1.8;}
+  .wishlist-btn:hover{background:var(--danger-500);}
+  .wishlist-btn:hover svg{stroke:#fff;}
+  .wishlist-btn.active svg{fill:var(--danger-500);stroke:var(--danger-500);}
+
+  .card-body{padding:16px 16px 18px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .card-brand{font-size:11.5px;color:var(--steel-400);font-weight:700;letter-spacing:.3px;}
+  .card-title{
+    font-size:15.5px;font-weight:700;color:var(--navy-900);line-height:1.5;
+    min-height:47px;
+  }
+  .card-rating{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--steel-400);}
+  .card-rating .stars{color:var(--amber-500);letter-spacing:1px;}
+  .card-price{display:flex;align-items:baseline;gap:8px;margin-top:2px;}
+  .price-now{font-size:19px;font-weight:900;color:var(--navy-900);}
+  .price-old{font-size:13px;color:var(--steel-400);text-decoration:line-through;}
+
+  .card-footer{
+    margin-top:auto;padding-top:12px;border-top:1px solid #f0f1f6;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .cart-icon-btn{
+    width:42px;height:42px;border-radius:10px;
+    background:var(--paper);border:1.5px solid #e3e6ee;
+    display:flex;align-items:center;justify-content:center;
+    transition:.2s;flex-shrink:0;
+  }
+  .cart-icon-btn svg{width:19px;height:19px;stroke:var(--navy-800);fill:none;stroke-width:1.8;}
+  .cart-icon-btn:hover{background:var(--navy-900);border-color:var(--navy-900);}
+  .cart-icon-btn:hover svg{stroke:#fff;}
+  .cart-icon-btn.added{background:var(--ok-500);border-color:var(--ok-500);}
+  .cart-icon-btn.added svg{stroke:#fff;}
+
+  .buy-btn{
+    background:var(--amber-500);color:#fff;font-weight:800;font-size:13.5px;
+    padding:11px 20px;border-radius:10px;flex:1;margin-right:10px;
+    text-align:center;transition:.2s;
+  }
+  .buy-btn:hover{background:var(--amber-600);box-shadow:0 6px 16px rgba(232,148,15,0.35);}
+
+  /* ===== Trust strip ===== */
+  .trust-strip{
+    max-width:1240px;margin:56px auto 0;padding:0 24px;
+  }
+  .trust-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+    background:var(--navy-900);border-radius:var(--radius-lg);padding:30px 20px;
+  }
+  .trust-item{display:flex;align-items:center;gap:14px;color:#fff;}
+  .trust-item .ic{
+    width:46px;height:46px;border-radius:12px;flex-shrink:0;
+    background:rgba(245,165,36,0.15);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .trust-item .ic svg{width:23px;height:23px;stroke:var(--amber-400);fill:none;stroke-width:1.7;}
+  .trust-item h4{font-size:14px;font-weight:800;margin-bottom:3px;}
+  .trust-item p{font-size:12.5px;color:var(--steel-400);}
+
+  /* ===== Newsletter ===== */
+  .newsletter{max-width:1240px;margin:56px auto 0;padding:0 24px;}
+  .nl-box{
+    background:linear-gradient(120deg,var(--amber-500),var(--amber-600));
+    border-radius:var(--radius-lg);padding:36px 40px;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;
+    color:#fff;
+  }
+  .nl-box h3{font-size:20px;font-weight:900;margin-bottom:6px;}
+  .nl-box p{font-size:13.5px;color:rgba(255,255,255,0.9);}
+  .nl-form{display:flex;gap:0;border-radius:10px;overflow:hidden;box-shadow:var(--shadow-md);}
+  .nl-form input{border:none;padding:13px 16px;font-family:inherit;font-size:14px;width:260px;outline:none;}
+  .nl-form button{background:var(--navy-950);color:#fff;padding:0 22px;font-weight:700;font-size:14px;}
+
+  /* ===== Footer ===== */
+  footer{background:var(--navy-950);color:var(--steel-400);margin-top:60px;}
+  .footer-top{
+    max-width:1240px;margin:0 auto;padding:50px 24px 30px;
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:32px;
+  }
+  .footer-col h5{color:#fff;font-size:15px;font-weight:800;margin-bottom:16px;}
+  .footer-col ul li{margin-bottom:10px;font-size:13.5px;}
+  .footer-col ul li a:hover{color:var(--amber-400);}
+  .footer-col p{font-size:13px;line-height:1.9;}
+  .footer-logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:20px;color:#fff;margin-bottom:14px;}
+  .social-row{display:flex;gap:10px;margin-top:16px;}
+  .social-row a{
+    width:36px;height:36px;border-radius:50%;background:var(--navy-800);
+    display:flex;align-items:center;justify-content:center;transition:.2s;
+  }
+  .social-row a:hover{background:var(--amber-500);}
+  .social-row svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:1.8;}
+  .payment-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .payment-row span{
+    background:var(--navy-800);padding:6px 12px;border-radius:6px;font-size:11.5px;font-weight:700;color:var(--steel-300);
+  }
+  .footer-bottom{
+    border-top:1px solid var(--navy-800);padding:18px 24px;text-align:center;font-size:12.5px;
+  }
+
+  /* ===== Cart Drawer ===== */
+  .overlay{
+    position:fixed;inset:0;background:rgba(11,18,32,0.55);
+    opacity:0;pointer-events:none;transition:opacity .3s;z-index:200;
+    backdrop-filter:blur(2px);
+  }
+  .overlay.show{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;left:0;height:100%;width:400px;max-width:92vw;
+    background:#fff;z-index:201;
+    transform:translateX(-105%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;box-shadow:8px 0 40px rgba(0,0,0,0.25);
+  }
+  .drawer.show{transform:translateX(0);}
+  .drawer-head{
+    padding:20px 22px;border-bottom:1px solid #eee;
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--navy-900);color:#fff;
+  }
+  .drawer-head h3{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;}
+  .drawer-head button{color:#fff;font-size:22px;line-height:1;padding:4px;}
+  .drawer-body{flex:1;overflow-y:auto;padding:16px 20px;}
+  .cart-empty{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    height:100%;color:var(--steel-400);gap:12px;text-align:center;padding-top:60px;
+  }
+  .cart-empty svg{width:64px;height:64px;stroke:#d5dae5;fill:none;stroke-width:1.2;}
+  .cart-line{
+    display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #f0f1f6;
+  }
+  .cart-line img{width:66px;height:66px;object-fit:contain;background:#f5f6fa;border-radius:10px;padding:6px;flex-shrink:0;}
+  .cart-line-info{flex:1;display:flex;flex-direction:column;gap:4px;}
+  .cart-line-info .name{font-size:13.5px;font-weight:700;color:var(--navy-900);line-height:1.4;}
+  .cart-line-info .price{font-size:13px;color:var(--amber-600);font-weight:800;}
+  .qty-row{display:flex;align-items:center;gap:8px;margin-top:2px;}
+  .qty-row button{
+    width:24px;height:24px;border-radius:6px;background:var(--paper);border:1px solid #e3e6ee;
+    font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;
+  }
+  .qty-row span{font-size:13px;font-weight:700;min-width:16px;text-align:center;}
+  .remove-btn{
+    align-self:flex-start;color:var(--danger-500);
+    display:flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:8px;transition:.2s;flex-shrink:0;
+  }
+  .remove-btn:hover{background:rgba(229,72,77,0.12);}
+  .remove-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;}
+  .drawer-footer{
+    border-top:1px solid #eee;padding:18px 22px 22px;background:var(--paper);
+  }
+  .sum-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--navy-800);margin-bottom:8px;}
+  .sum-row.total{font-size:17px;font-weight:900;color:var(--navy-900);margin-top:10px;}
+  .checkout-btn{
+    width:100%;background:var(--amber-500);color:#fff;font-weight:800;font-size:15px;
+    padding:14px;border-radius:12px;margin-top:14px;transition:.2s;
+  }
+  .checkout-btn:hover{background:var(--amber-600);}
+
+  /* toast */
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--navy-950);color:#fff;padding:12px 24px;border-radius:12px;
+    font-size:13.5px;font-weight:700;box-shadow:var(--shadow-lg);
+    opacity:0;pointer-events:none;transition:.3s;z-index:300;
+    display:flex;align-items:center;gap:8px;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast svg{width:17px;height:17px;stroke:var(--ok-500);fill:none;stroke-width:2;}
+
+  @media(max-width:1024px){
+    .grid{grid-template-columns:repeat(2,1fr);}
+    .trust-grid{grid-template-columns:repeat(2,1fr);}
+    .footer-top{grid-template-columns:1fr 1fr;}
+  }
+  @media(max-width:640px){
+    .grid{grid-template-columns:1fr;}
+    .header-main{flex-wrap:wrap;}
+    .search-wrap{order:3;width:100%;}
+    .hero-banner{flex-direction:column;text-align:center;padding:30px 22px;}
+    .trust-grid{grid-template-columns:1fr;}
+    .footer-top{grid-template-columns:1fr;}
+    .nl-box{flex-direction:column;text-align:center;}
+    .nl-form input{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Top utility bar -->
+<div class="topbar">
+  <div class="wrap">
+    <span>🚚 شحن مجاني للطلبات فوق 500 درهم | ضمان استرجاع 14 يوم</span>
+    <div class="right-links">
+      <span>📞 0715072766</span>
+      <span>تتبع الطلب</span>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<header >
+  <div class="header-main" >
+    <div class="logo">
+        <div class="logo-badge">
+          <img src="logo.png" alt="EL PLAS" style="width:100%;height:100%;object-fit:contain;">
+        </div>PLAS<span class="dot">EL</span>
+    </div>
+
+    <div class="search-wrap">
+      <select>
+        <option>كل الأقسام</option>
+        <option>الكترونية</option>
+        <option>منزلية</option>
+        <option>الحديقة</option>
+        <option>السيارت</option>
+      </select>
+      <input type="text" placeholder="ابحث عن منتج، ماركة أو فئة...">
+      <button aria-label="بحث">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+    </div>
+
+    <div class="header-actions">
+      <a href="#" class="icon-btn">
+        <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="lbl">حسابي</span>
+      </a>
+      <button class="icon-btn" id="wishlistBtn">
+        <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="lbl">مفضلتي</span>
+        <span class="cart-badge" id="wishlistBadge">0</span>
+      </button>
+      <button class="icon-btn" id="cartBtn">
+        <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+        <span class="lbl">السلة</span>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </div>
+
+  <nav class="catnav">
+    <div class="wrap">
+      <a href="#" class="active">جميع المنتجات</a>
+      <a href="#">الكترونية</a>
+      <a href="#">منزلية</a>
+      <a href="#">الحديقة</a>
+      <a href="#">السيارت</a>
+      <a href="#">متنوعة</a>
+      <a href="#">عروض اليوم 🔥</a>
+    </div>
+  </nav>
+</header>
+
+
+
+
+<!-- Products -->
+<section class="section" id="products">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">الأكثر مبيعاً</span>
+      <h2>منتجات مختارة لك</h2>
+    </div>
+    <a href="#" class="view-all">عرض الكل ←</a>
+  </div>
+
+  <div class="grid" id="productGrid">
+    <!-- Cards injected by JS -->
+  </div>
+</section>
+
+<!-- Trust strip -->
+<section class="trust-strip">
+  <div class="trust-grid">
+    <div class="trust-item">
+      <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+      <div><h4>توصيل سريع</h4><p>لكل المدن خلال 24-72 ساعة</p></div>
+    </div>
+    <div class="trust-item">
+      <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+      <div><h4>دفع آمن</h4><p>طرق دفع متعددة ومشفّرة</p></div>
+    </div>
+    <div class="trust-item">
+      <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+      <div><h4>دفع آمن</h4><p>طرق دفع متعددة ومشفّرة</p></div>
+    </div>
+    <div class="trust-item">
+      <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></div>
+      <div><h4>إرجاع مجاني</h4><p>خلال 14 يوماً من الاستلام</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter">
+  <div class="nl-box">
+    <div>
+      <h3>لا تفوّت عروضنا الحصرية</h3>
+      <p>اشترك في نشرتنا البريدية واحصل على خصم 10% على أول طلب</p>
+    </div>
+    <form class="nl-form" onsubmit="return false;">
+      <input type="email" placeholder="بريدك الإلكتروني" required>
+      <button type="submit">اشتراك</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-col">
+      <div class="footer-logo">
+    <div class="logo">
+        <div class="logo-badge">
+          <img src="logo.png" alt="EL PLAS" style="width:100%;height:100%;object-fit:contain;">
+        </div>PLAS<span class="dot">EL</span>
+    </div>
+      </div>
+      <p>🚚 شحن مجاني للطلبات فوق 500 درهم | ضمان استرجاع 14 يوم</p>
+      <div class="social-row">
+        <a href="#"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="#"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.1 1.5A4.5 4.5 0 0 0 12 8v1A10.7 10.7 0 0 1 3 4s-4 9 5 13a11.6 11.6 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.1-1A7.7 7.7 0 0 0 23 3z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>تسوق</h5>
+      <ul>
+        <li><a href="#">الكترونية</a></li>
+        <li><a href="#">منزلية</a></li>
+        <li><a href="#">الحديقة</a></li>
+        <li><a href="#">السيارت</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>خدمة العملاء</h5>
+      <ul>
+        <li><a href="#">تواصل معنا</a></li>
+        <li><a href="#">الأسئلة الشائعة</a></li>
+        <li><a href="#">سياسة الإرجاع</a></li>
+        <li><a href="#">تتبع الطلب</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>طرق الدفع</h5>
+      <p>وسائل دفع آمنة ومتعددة تناسبك</p>
+      <div class="payment-row">
+        <span>Visa</span><span>Mastercard</span><span>Apple Pay</span><span>الدفع عند الاستلام</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 بوتيك بلاس (EL PLAS Cosmetics). جميع الحقوق محفوظة.</div>
+</footer>
+
+<!-- Cart drawer -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>
+      <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19" fill="none" stroke="#fff"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+      سلة التسوق
+    </h3>
+    <button id="closeDrawer">×</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-footer" id="drawerFooter" style="display:none;">
+    <div class="sum-row"><span>المجموع الفرعي</span><span id="sumSub">0 درهم</span></div>
+    <div class="sum-row"><span>الشحن</span><span id="sumShip">مجاني</span></div>
+    <div class="sum-row total"><span>الإجمالي</span><span id="sumTotal">0 درهم</span></div>
+  </div>
+</div>
+
+<!-- Wishlist drawer -->
+<div class="overlay" id="wishOverlay"></div>
+<div class="drawer" id="wishDrawer">
+  <div class="drawer-head">
+    <h3>
+      <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19" fill="none" stroke="#fff"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      قائمة المفضلة
+    </h3>
+    <button id="closeWishDrawer">×</button>
+  </div>
+  <div class="drawer-body" id="wishDrawerBody"></div>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+  <span id="toastMsg">تمت الإضافة إلى السلة</span>
+</div>
+
+<script>
+/* ============ EL PLAS — نظام تتبع التحليلات الحقيقي ============ */
+const PLAS_KEYS = {
+  VISITS: 'PLAS_analytics_visits',
+  PRODUCT_VIEWS: 'PLAS_analytics_product_views',
+  CLICKS: 'PLAS_analytics_clicks',
+  ORDERS: 'PLAS_analytics_orders'
+};
+function PLASLog(key, data){
+  try{
+    const arr = JSON.parse(localStorage.getItem(key) || '[]');
+    arr.push(Object.assign({ ts: Date.now() }, data));
+    if(arr.length > 5000) arr.splice(0, arr.length - 5000);
+    localStorage.setItem(key, JSON.stringify(arr));
+  }catch(e){}
+}
+PLASLog(PLAS_KEYS.VISITS, { page: 'home' });
+
+// ============== منتجات مخزنة في localStorage (تضاف من صفحة home) ==============
+// التخزين: 'PLAS_products' -> array من المنتجات
+function loadProducts(){
+  try{
+    const data = localStorage.getItem('PLAS_products');
+    if(data) return JSON.parse(data);
+  }catch(e){}
+  return [];
+}
+function saveProducts(products){
+  try{ localStorage.setItem('PLAS_products', JSON.stringify(products)); }catch(e){}
+}
+
+// إذا كانت هناك منتجات محفوظة نستخدمها، وإلا نضع مصفوفة فارغة (تضاف من home)
+let products = loadProducts();
+if(!products || products.length === 0){
+  // نضع مصفوفة فارغة ولكن نضيف مثالًا واحدًا فقط للتوضيح، ولكن سيتم حذفه لاحقًا من home
+  products = [];
+  saveProducts(products);
+}
+
+// ============== بقية النظام ==============
+const CART_KEY = 'teckline_cart_v1';
+let cart = {};
+try{ const saved = localStorage.getItem(CART_KEY); if(saved) cart = JSON.parse(saved); }catch(e){}
+function saveCart(){ try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(e){} }
+
+const WISH_KEY = 'teckline_wishlist_v1';
+let wishlist = [];
+try{ const savedWish = localStorage.getItem(WISH_KEY); if(savedWish) wishlist = JSON.parse(savedWish); }catch(e){}
+function saveWishlist(){ try{ localStorage.setItem(WISH_KEY, JSON.stringify(wishlist)); }catch(e){} }
+
+const grid = document.getElementById('productGrid');
+
+// دالة لعرض المنتجات
+function renderProducts(){
+  const currentProducts = loadProducts();
+  grid.innerHTML = '';
+  if(!currentProducts || currentProducts.length === 0){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--steel-400);font-size:15px;">لا توجد منتجات حالياً. أضف منتجاتك من صفحة الإدارة (home).</div>`;
+    return;
+  }
+  currentProducts.forEach(p => {
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `
+      <div class="card-media">
+        ${p.badge ? `<span class="badge ${p.oldPrice?'sale':''}">${p.badge}</span>` : ''}
+        <button class="wishlist-btn ${wishlist.includes(p.id) ? 'active' : ''}" data-wish="${p.id}">
+          <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        </button>
+        <img src="${p.img || ''}" alt="${p.name}" onerror="this.src=''">
+      </div>
+      <div class="card-body">
+        <span class="card-brand">${p.brand || 'EL PLAS'}</span>
+        <h3 class="card-title">${p.name}</h3>
+        <div class="card-rating">
+          <span class="stars">★★★★★</span>
+          <span>${p.rating || 4.9} (${p.reviews || 0})</span>
+        </div>
+        <div class="card-price">
+          <span class="price-now">${p.price || 0} درهم</span>
+          ${p.oldPrice ? `<span class="price-old">${p.oldPrice} درهم</span>` : ''}
+        </div>
+        <div class="card-footer">
+          <button class="cart-icon-btn" data-add="${p.id}" aria-label="أضف إلى السلة">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+          </button>
+          <a href="index2.html" class="buy-btn" data-buy="${p.id}">اشترِ الآن</a>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // إعادة ربط الأحداث
+  document.querySelectorAll('[data-wish]').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      const id = +this.dataset.wish;
+      const p = loadProducts().find(x=>x.id===id);
+      if(wishlist.includes(id)){
+        wishlist = wishlist.filter(x=>x!==id);
+        this.classList.remove('active');
+        showToast('تمت الإزالة من المفضلة');
+        PLASLog(PLAS_KEYS.CLICKS, { productId:id, productName:p?.name||'', action:'remove_wishlist' });
+      } else {
+        wishlist.push(id);
+        this.classList.add('active');
+        showToast('تمت الإضافة إلى المفضلة');
+        PLASLog(PLAS_KEYS.CLICKS, { productId:id, productName:p?.name||'', action:'add_wishlist' });
+      }
+      updateWishlistUI();
+    });
+  });
+
+  document.querySelectorAll('[data-add]').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      const id = +this.dataset.add;
+      const p = loadProducts().find(x=>x.id===id);
+      cart[id] = (cart[id]||0)+1;
+      updateCartUI();
+      this.classList.add('added');
+      setTimeout(()=>this.classList.remove('added'),700);
+      showToast('تمت إضافة المنتج إلى السلة');
+      PLASLog(PLAS_KEYS.CLICKS, { productId:id, productName:p?.name||'', action:'add_to_cart' });
+      document.getElementById('cartBadge').classList.remove('bump');
+      void document.getElementById('cartBadge').offsetWidth;
+      document.getElementById('cartBadge').classList.add('bump');
+    });
+  });
+
+  document.querySelectorAll('[data-buy]').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      const id = +this.dataset.buy;
+      const p = loadProducts().find(x=>x.id===id);
+      cart[id] = (cart[id]||0)+1;
+      saveCart();
+      try{ localStorage.setItem('teckline_selected_product', id); }catch(e){}
+      PLASLog(PLAS_KEYS.CLICKS, { productId:id, productName:p?.name||'', action:'buy_now' });
+    });
+  });
+}
+
+function cartCount(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
+function cartTotal(){
+  const allProducts = loadProducts();
+  return Object.entries(cart).reduce((sum,[id,qty])=>{
+    const p = allProducts.find(x=>x.id==id);
+    return sum + (p?.price||0)*qty;
+  },0);
+}
+
+function updateCartUI(){
+  saveCart();
+  document.getElementById('cartBadge').textContent = cartCount();
+  renderDrawer();
+}
+function updateWishlistUI(){
+  saveWishlist();
+  document.getElementById('wishlistBadge').textContent = wishlist.length;
+  const badge = document.getElementById('wishlistBadge');
+  badge.classList.remove('bump');
+  void badge.offsetWidth;
+  badge.classList.add('bump');
+  renderWishDrawer();
+}
+
+function renderDrawer(){
+  const body = document.getElementById('drawerBody');
+  const footer = document.getElementById('drawerFooter');
+  const allProducts = loadProducts();
+  const ids = Object.keys(cart).filter(id=>cart[id]>0);
+
+  if(ids.length===0){
+    body.innerHTML = `<div class="cart-empty"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg><p>سلتك فارغة حالياً</p></div>`;
+    footer.style.display='none';
+    return;
+  }
+  footer.style.display='block';
+  body.innerHTML = ids.map(id=>{
+    const p = allProducts.find(x=>x.id==id);
+    const qty = cart[id];
+    if(!p) return '';
+    return `
+      <div class="cart-line" data-line="${id}">
+        <img src="${p.img||''}" alt="${p.name}" class="line-click" data-goto="${id}" style="cursor:pointer;" onerror="this.src=''">
+        <div class="cart-line-info">
+          <span class="name line-click" data-goto="${id}" style="cursor:pointer;">${p.name}</span>
+          <span class="price">${p.price} درهم</span>
+          <div class="qty-row">
+            <button data-dec="${id}">−</button>
+            <span>${qty}</span>
+            <button data-inc="${id}">+</button>
+          </div>
+        </div>
+        <button class="remove-btn" data-remove="${id}" aria-label="حذف">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
+      </div>`;
+  }).join('');
+
+  body.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.goto;
+      try{ localStorage.setItem('teckline_selected_product', id); }catch(e){}
+      window.location.href = 'index2.html';
+    });
+  });
+
+  document.getElementById('sumSub').textContent = cartTotal()+' درهم';
+  document.getElementById('sumTotal').textContent = cartTotal()+' درهم';
+
+  body.querySelectorAll('[data-remove]').forEach(b => {
+    b.addEventListener('click', ()=>{ delete cart[b.dataset.remove]; updateCartUI(); });
+  });
+  body.querySelectorAll('[data-inc]').forEach(b => {
+    b.addEventListener('click', ()=>{ cart[b.dataset.inc]++; updateCartUI(); });
+  });
+  body.querySelectorAll('[data-dec]').forEach(b => {
+    b.addEventListener('click', ()=>{
+      cart[b.dataset.dec]--;
+      if(cart[b.dataset.dec]<=0) delete cart[b.dataset.dec];
+      updateCartUI();
+    });
+  });
+}
+
+function renderWishDrawer(){
+  const body = document.getElementById('wishDrawerBody');
+  if(!body) return;
+  const allProducts = loadProducts();
+  if(wishlist.length===0){
+    body.innerHTML = `<div class="cart-empty"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><p>قائمة المفضلة فارغة حالياً</p></div>`;
+    return;
+  }
+  body.innerHTML = wishlist.map(id=>{
+    const p = allProducts.find(x=>x.id===id);
+    if(!p) return '';
+    return `
+      <div class="cart-line" data-line="${id}">
+        <img src="${p.img||''}" alt="${p.name}" class="line-click" data-wgoto="${id}" style="cursor:pointer;" onerror="this.src=''">
+        <div class="cart-line-info">
+          <span class="name line-click" data-wgoto="${id}" style="cursor:pointer;">${p.name}</span>
+          <span class="price">${p.price} درهم</span>
+          <button class="cart-icon-btn" data-wish-add="${id}" style="width:auto;padding:6px 12px;margin-top:6px;display:inline-flex;gap:6px;align-items:center;">
+            <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            <span style="font-size:12.5px;font-weight:700;">أضف للسلة</span>
+          </button>
+        </div>
+        <button class="remove-btn" data-wish-remove="${id}" aria-label="حذف من المفضلة">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
+      </div>`;
+  }).join('');
+
+  body.querySelectorAll('[data-wgoto]').forEach(el => {
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.wgoto;
+      try{ localStorage.setItem('teckline_selected_product', id); }catch(e){}
+      window.location.href = 'index2.html';
+    });
+  });
+
+  body.querySelectorAll('[data-wish-remove]').forEach(b => {
+    b.addEventListener('click', ()=>{
+      const id = +b.dataset.wishRemove;
+      wishlist = wishlist.filter(x=>x!==id);
+      document.querySelector(`[data-wish="${id}"]`)?.classList.remove('active');
+      updateWishlistUI();
+    });
+  });
+  body.querySelectorAll('[data-wish-add]').forEach(b => {
+    b.addEventListener('click', ()=>{
+      const id = +b.dataset.wishAdd;
+      const p = loadProducts().find(x=>x.id===id);
+      cart[id] = (cart[id]||0)+1;
+      updateCartUI();
+      showToast('تمت إضافة المنتج إلى السلة');
+      PLASLog(PLAS_KEYS.CLICKS, { productId:id, productName:p?.name||'', action:'add_to_cart' });
+    });
+  });
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+const overlay = document.getElementById('overlay');
+const drawer = document.getElementById('drawer');
+function openDrawer(){ overlay.classList.add('show'); drawer.classList.add('show'); renderDrawer(); }
+function closeDrawer(){ overlay.classList.remove('show'); drawer.classList.remove('show'); }
+document.getElementById('cartBtn').addEventListener('click', openDrawer);
+document.getElementById('closeDrawer').addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+
+const wishOverlay = document.getElementById('wishOverlay');
+const wishDrawer = document.getElementById('wishDrawer');
+function openWishDrawer(){ wishOverlay.classList.add('show'); wishDrawer.classList.add('show'); renderWishDrawer(); }
+function closeWishDrawer(){ wishOverlay.classList.remove('show'); wishDrawer.classList.remove('show'); }
+document.getElementById('wishlistBtn').addEventListener('click', openWishDrawer);
+document.getElementById('closeWishDrawer').addEventListener('click', closeWishDrawer);
+wishOverlay.addEventListener('click', closeWishDrawer);
+
+document.getElementById('cartBadge').textContent = cartCount();
+document.getElementById('wishlistBadge').textContent = wishlist.length;
+
+// ====== الاستماع لتحديث المنتجات من home ======
+window.addEventListener('storage', (e)=>{
+  if(e.key === 'PLAS_products'){
+    renderProducts();
+  }
+});
+
+// العرض الأولي
+renderProducts();
+
+// نعطي إشارة أن الصفحة جاهزة لتلقي البيانات من home
+console.log('EL PLAS store ready — ستظهر المنتجات بمجرد إضافتها من صفحة home');
+</script>
+</body>
+</html>
