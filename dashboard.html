@@ -84,6 +84,7 @@
   .icon-action:hover{background:rgba(255,255,255,0.18);}
   .icon-action svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:1.9;}
   .icon-action.spin-on-click svg{transition:transform .5s;}
+  .icon-action.danger:hover{background:rgba(229,72,77,0.25);}
 
   .back-link{
     color:var(--steel-300);font-size:13px;display:flex;align-items:center;gap:6px;transition:.2s;
@@ -279,6 +280,16 @@
   .file-status-banner .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-left:6px;}
   .file-status-banner .dot.green{background:var(--ok-500);}
   .file-status-banner .dot.red{background:var(--danger-500);}
+  .file-status-banner .btn-select{
+    background:var(--amber-500);
+    color:#fff;
+    padding:6px 16px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:12px;
+    transition:.2s;
+  }
+  .file-status-banner .btn-select:hover{background:var(--amber-600);}
 
   @media(max-width:1180px){
     .kpi-grid{grid-template-columns:repeat(3,1fr);}
@@ -300,7 +311,7 @@
       </div>
       <div class="brand-text">
         <h1>تحليل الاحداث</h1>
-        <span><span class="live-dot"></span> بيانات مباشرة من data.json</span>
+        <span><span class="live-dot"></span> بيانات حقيقية مباشرة من متجرك</span>
       </div>
     </div>
     <div class="header-actions">
@@ -314,8 +325,14 @@
         <button class="range-btn" data-range="30">آخر 30 يوم</button>
         <button class="range-btn" data-range="all">الكل</button>
       </div>
-      <button class="icon-action spin-on-click" id="refreshBtn" title="تحديث البيانات من data.json">
+      <button class="icon-action spin-on-click" id="refreshBtn" title="تحديث البيانات">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/></svg>
+      </button>
+      <button class="icon-action" id="exportBtn" title="تنزيل data.json المحدّث">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      </button>
+      <button class="icon-action danger" id="resetBtn" title="مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
       </button>
     </div>
   </div>
@@ -338,16 +355,17 @@
       </span>
       <span>
         <span class="dot red" id="dataStatusDot"></span>
-        <span id="dataStatusText">البيانات (data.json): جارٍ التحميل...</span>
+        <span id="dataStatusText">السجل المحفوظ (data.json): جارٍ التحميل...</span>
       </span>
     </div>
+    <button class="btn-select" id="exportDataBtn">⬇️ تنزيل data.json المحدّث</button>
   </div>
 
   <div id="emptyBanner" class="empty-banner" style="display:none;">
     <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>
     <div>
-      <h3>لا توجد بيانات مسجّلة بعد في data.json</h3>
-      <p>هذه اللوحة تعرض فقط الأحداث الموجودة داخل ملف <code>data.json</code> (زيارات، مشاهدات، نقرات، طلبات). تأكد من أن الملف موجود بجانب هذه الصفحة ويحتوي على بيانات.</p>
+      <h3>لا توجد بيانات حقيقية مسجّلة بعد</h3>
+      <p>هذه اللوحة تعرض الأحداث الفعلية المسجلة من متجرك (زيارات، مشاهدات، نقرات، طلبات). قم بزيارة المتجر والتفاعل مع المنتجات، ثم عد لهذه الصفحة لرؤية البيانات. الأحداث تُسجَّل مباشرة في متصفحك، وتُدمَج تلقائياً مع أي سجل محفوظ سابقاً في <code>data.json</code>.</p>
     </div>
   </div>
 
@@ -475,19 +493,30 @@
 </div>
 
 <footer class="note">
-  المنتجات تُحمَّل تلقائياً من products.json. كل الأحداث (زيارات، مشاهدات، نقرات، طلبات) تُقرأ تلقائياً من ملف data.json الموجود بجانب هذه الصفحة عند كل فتح أو تحديث — بدون أي تدخل يدوي وبدون الاعتماد على تخزين المتصفح (localStorage).
+  المنتجات تُحمَّل تلقائياً من products.json. أحداث الزيارات والنقرات والطلبات تُسجَّل مباشرة في متصفحك (localStorage) بواسطة صفحات المتجر، وتُدمَج هنا تلقائياً مع أي سجل تاريخي محفوظ في data.json.
+  لجعل هذا السجل التاريخي يظهر لجميع الأجهزة، اضغط "⬇️ تنزيل data.json المحدّث" بين الحين والآخر وارفع الملف إلى مستودع GitHub الخاص بالموقع.
 </footer>
 
 <script>
 /* ================================================================
-   لوحة التحكم — تحميل تلقائي للمنتجات من products.json وللأحداث
-   (زيارات/مشاهدات/نقرات/طلبات) من data.json فقط. لا استخدام إطلاقاً
-   لـ localStorage: كل ما يظهر فاللوحة مصدره مباشرة الملفين، ويُعاد
-   جلبهما تلقائياً عند فتح الصفحة أو الضغط على زر التحديث.
+   لوحة التحكم — تحميل تلقائي للمنتجات من products.json (بدون
+   الاعتماد على localStorage لكتالوج المنتجات)، ودمج بيانات
+   التحليلات الحيّة المسجّلة في هذا المتصفح (localStorage، تُكتب من
+   صفحات المتجر والمنتج) مع سجل تاريخي محفوظ في data.json.
+   بما أن الموقع مستضاف على GitHub Pages (استضافة ثابتة)، لا يمكن
+   الكتابة التلقائية في data.json على الخادم؛ يمكن تنزيل النسخة
+   المحدّثة ورفعها يدوياً للحفاظ على السجل عبر جميع الأجهزة.
    ================================================================ */
 
+const PLAS_KEYS = {
+  VISITS: 'PLAS_analytics_visits',
+  PRODUCT_VIEWS: 'PLAS_analytics_product_views',
+  CLICKS: 'PLAS_analytics_clicks',
+  ORDERS: 'PLAS_analytics_orders'
+};
+
 let products = [];
-let analyticsData = { visits:[], product_views:[], clicks:[], orders:[] };
+let persistedAnalytics = { visits:[], product_views:[], clicks:[], orders:[] };
 
 // ========== حالة تحميل المنتجات ==========
 function updateFileStatus(connected, msg = '') {
@@ -508,10 +537,10 @@ function updateDataStatus(connected, msg = '') {
   const text = document.getElementById('dataStatusText');
   if (connected) {
     dot.className = 'dot green';
-    text.textContent = '✅ البيانات (data.json): ' + msg;
+    text.textContent = '✅ السجل المحفوظ (data.json): ' + msg;
   } else {
     dot.className = 'dot red';
-    text.textContent = '⚠️ البيانات (data.json): ' + (msg || 'تعذر التحميل');
+    text.textContent = '⚠️ السجل المحفوظ (data.json): ' + (msg || 'غير موجود بعد');
   }
 }
 
@@ -532,26 +561,51 @@ async function loadProductsCatalog(){
   render();
 }
 
-// ========== تحميل تلقائي للأحداث من data.json فقط (بدون localStorage) ==========
-async function loadAnalyticsData(){
+// ========== تحميل تلقائي للسجل التاريخي المحفوظ من data.json ==========
+async function loadPersistedAnalytics(){
   try{
     const res = await fetch('data.json', { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    analyticsData = {
+    persistedAnalytics = {
       visits: Array.isArray(data.visits) ? data.visits : [],
       product_views: Array.isArray(data.product_views) ? data.product_views : [],
       clicks: Array.isArray(data.clicks) ? data.clicks : [],
       orders: Array.isArray(data.orders) ? data.orders : []
     };
-    const total = analyticsData.visits.length + analyticsData.product_views.length + analyticsData.clicks.length + analyticsData.orders.length;
-    updateDataStatus(true, `${total} حدث`);
+    const total = persistedAnalytics.visits.length + persistedAnalytics.product_views.length + persistedAnalytics.clicks.length + persistedAnalytics.orders.length;
+    updateDataStatus(true, `${total} حدث محفوظ`);
   }catch(err){
-    console.error('تعذر تحميل data.json:', err);
-    updateDataStatus(false, 'تعذر تحميل الملف');
-    analyticsData = { visits:[], product_views:[], clicks:[], orders:[] };
+    console.warn('لا يوجد data.json بعد أو تعذر تحميله:', err.message);
+    persistedAnalytics = { visits:[], product_views:[], clicks:[], orders:[] };
+    updateDataStatus(false, 'لم يُنشأ بعد');
   }
   render();
+}
+
+// ========== دمج الأحداث الحيّة (localStorage) مع السجل التاريخي (data.json) ==========
+function dedupeEvents(arr){
+  const seen = new Set();
+  const out = [];
+  arr.forEach(e=>{
+    const k = JSON.stringify(e);
+    if(!seen.has(k)){ seen.add(k); out.push(e); }
+  });
+  return out;
+}
+
+const PERSIST_KEY_MAP = {
+  [PLAS_KEYS.VISITS]: 'visits',
+  [PLAS_KEYS.PRODUCT_VIEWS]: 'product_views',
+  [PLAS_KEYS.CLICKS]: 'clicks',
+  [PLAS_KEYS.ORDERS]: 'orders'
+};
+
+function loadArr(key){
+  let local = [];
+  try{ const v = JSON.parse(localStorage.getItem(key) || '[]'); if(Array.isArray(v)) local = v; }catch(e){}
+  const persisted = persistedAnalytics[PERSIST_KEY_MAP[key]] || [];
+  return dedupeEvents([...persisted, ...local]).sort((a,b)=> (a.ts||0) - (b.ts||0));
 }
 
 let currentRange = '7';
@@ -570,10 +624,6 @@ function cutoffForRange(range){
 function filterByRange(arr, range){
   const cutoff = cutoffForRange(range);
   return arr.filter(e => e && typeof e.ts === 'number' && e.ts >= cutoff);
-}
-
-function sortByTs(arr){
-  return [...arr].sort((a,b)=> (a.ts||0) - (b.ts||0));
 }
 
 function animateNumber(el, target, isDecimal, suffix){
@@ -601,10 +651,10 @@ function render(){
   const range = currentRange;
   const rangeLabels = { today:'اليوم', '7':'آخر 7 أيام', '30':'آخر 30 يوم', all:'كل الفترات' };
 
-  const visitsAllRaw = sortByTs(analyticsData.visits);
-  const viewsAllRaw = sortByTs(analyticsData.product_views);
-  const clicksAllRaw = sortByTs(analyticsData.clicks);
-  const ordersAllRaw = sortByTs(analyticsData.orders);
+  const visitsAllRaw = loadArr(PLAS_KEYS.VISITS);
+  const viewsAllRaw = loadArr(PLAS_KEYS.PRODUCT_VIEWS);
+  const clicksAllRaw = loadArr(PLAS_KEYS.CLICKS);
+  const ordersAllRaw = loadArr(PLAS_KEYS.ORDERS);
 
   const totalEventsEver = visitsAllRaw.length + viewsAllRaw.length + clicksAllRaw.length + ordersAllRaw.length;
   document.getElementById('emptyBanner').style.display = totalEventsEver === 0 ? 'flex' : 'none';
@@ -717,10 +767,36 @@ document.getElementById('refreshBtn').addEventListener('click', (e)=>{
   svg.style.transform = 'rotate(360deg)';
   setTimeout(()=> svg.style.transform='rotate(0deg)', 500);
   loadProductsCatalog();
-  loadAnalyticsData();
+  loadPersistedAnalytics();
 });
 
-// ========== Gemini AI ==========
+function downloadDataJson(){
+  const data = {
+    exported_at: new Date().toISOString(),
+    visits: loadArr(PLAS_KEYS.VISITS),
+    product_views: loadArr(PLAS_KEYS.PRODUCT_VIEWS),
+    clicks: loadArr(PLAS_KEYS.CLICKS),
+    orders: loadArr(PLAS_KEYS.ORDERS)
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+document.getElementById('exportBtn').addEventListener('click', downloadDataJson);
+document.getElementById('exportDataBtn').addEventListener('click', downloadDataJson);
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm('هل أنت متأكد من مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح فقط؟ السجل المحفوظ في data.json لن يتأثر إلا بعد تنزيله ورفعه يدوياً من جديد. هذا الإجراء لا يمكن التراجع عنه.')){
+    Object.values(PLAS_KEYS).forEach(k => localStorage.removeItem(k));
+    render();
+  }
+});
+
+// ========== Gemini AI (نفس الكود من الملف السابق) ==========
 const GEMINI_API_KEY = 'AIzaSyD4x5fG7H8jK9l0QwErTyUiOpAsDfGhJkL';
 const GEMINI_MODEL = 'gemini-1.5-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
@@ -736,10 +812,10 @@ let aiIsLoading = false;
 function buildStoreDataSnapshot(){
   const range = currentRange;
   const rangeLabels = { today:'اليوم', '7':'آخر 7 أيام', '30':'آخر 30 يوم', all:'كل الفترات' };
-  const visitsAllRaw = sortByTs(analyticsData.visits);
-  const viewsAllRaw = sortByTs(analyticsData.product_views);
-  const clicksAllRaw = sortByTs(analyticsData.clicks);
-  const ordersAllRaw = sortByTs(analyticsData.orders);
+  const visitsAllRaw = loadArr(PLAS_KEYS.VISITS);
+  const viewsAllRaw = loadArr(PLAS_KEYS.PRODUCT_VIEWS);
+  const clicksAllRaw = loadArr(PLAS_KEYS.CLICKS);
+  const ordersAllRaw = loadArr(PLAS_KEYS.ORDERS);
   const visits = filterByRange(visitsAllRaw, range);
   const views = filterByRange(viewsAllRaw, range);
   const clicks = filterByRange(clicksAllRaw, range);
@@ -885,12 +961,14 @@ document.getElementById('aiChips').addEventListener('click', (e)=>{
   askAiAssistant(chip.dataset.q);
 });
 
-// ========== التحميل الأولي: تلقائي بالكامل، مصدره فقط الملفين ==========
+// ========== التحميل الأولي: تلقائي بالكامل ==========
 loadProductsCatalog();
-loadAnalyticsData();
+loadPersistedAnalytics();
 
-// إعادة جلب data.json دورياً باش أي تحديث فالملف يبان بلا ما تعاود فتح الصفحة
-setInterval(loadAnalyticsData, 20000);
+window.addEventListener('storage', (e)=>{
+  if(Object.values(PLAS_KEYS).includes(e.key)) render();
+});
+setInterval(render, 20000);
 </script>
 </body>
 </html>
