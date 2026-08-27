@@ -262,17 +262,8 @@
     </div>
 
     <script>
-    /* ================================================================
-       إدارة المنتجات — تحميل تلقائي من products.json عبر fetch
-       ملاحظة: لأن الموقع مستضاف على GitHub Pages (استضافة ثابتة)،
-       لا يمكن الكتابة مباشرة في products.json من المتصفح.
-       أي تعديل يُحفظ محلياً (في الذاكرة/localStorage) ويجب تنزيله
-       ثم رفعه يدوياً إلى مستودع GitHub ليظهر لجميع الزوار.
-       ================================================================ */
-
     let products = [];
 
-    // ========== تحديث حالة الاتصال ==========
     function updateFileStatus(connected, msg = '') {
         const dot = document.getElementById('statusDot');
         const text = document.getElementById('statusText');
@@ -285,7 +276,6 @@
         }
     }
 
-    // ========== تحميل المنتجات تلقائياً من products.json ==========
     async function autoLoadProducts() {
         try {
             const res = await fetch('products.json', { cache: 'no-store' });
@@ -302,7 +292,6 @@
         } catch (err) {
             console.error('تعذر تحميل products.json:', err);
             updateFileStatus(false, 'تعذر تحميل الملف');
-            // fallback: نسخة مخزنة محلياً إن وُجدت
             try {
                 const cached = localStorage.getItem('PLAS_products');
                 if (cached) {
@@ -320,7 +309,6 @@
         }
     }
 
-    // ========== تحديث محلي للمنتجات (بدون كتابة حقيقية على الخادم) ==========
     function saveProductsLocally(data) {
         products = data;
         try { localStorage.setItem('PLAS_products', JSON.stringify(data)); } catch (e) {}
@@ -329,7 +317,6 @@
         showToast('✅ تم الحفظ محلياً — نزّل الملف وارفعه إلى GitHub ليظهر للزوار');
     }
 
-    // ========== عرض المنتجات ==========
     function renderProducts() {
         const tbody = document.getElementById('productsBody');
         if (!products || products.length === 0) {
@@ -381,13 +368,11 @@
         });
     }
 
-    // ========== الحصول على ID جديد ==========
     function getNextId() {
         if (!products || products.length === 0) return 1;
         return Math.max(...products.map(p => p.id)) + 1;
     }
 
-    // ========== تحويل الصورة إلى Base64 ==========
     function fileToBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -397,7 +382,6 @@
         });
     }
 
-    // ========== إضافة / تعديل المنتج ==========
     document.getElementById('productForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -449,7 +433,6 @@
         closeFormModal();
     });
 
-    // ========== تعديل منتج ==========
     function editProduct(id) {
         const p = products.find(prod => prod.id === id);
         if (!p) return;
@@ -487,14 +470,12 @@
         openFormModal();
     }
 
-    // ========== حذف منتج ==========
     function deleteProduct(id) {
         const updated = products.filter(p => p.id !== id);
         saveProductsLocally(updated);
         showToast('🗑️ تم حذف المنتج محلياً — نزّل الملف وارفعه إلى GitHub ليظهر للزوار');
     }
 
-    // ========== إدارة النافذة المنبثقة ==========
     function openFormModal() {
         document.getElementById('formModalOverlay').classList.add('show');
         document.body.style.overflow = 'hidden';
@@ -549,7 +530,6 @@
         document.getElementById('formBadge').style.background = 'var(--amber-500)';
     }
 
-    // ========== معالجة الصورة ==========
     document.getElementById('pImageFile').addEventListener('change', function(e) {
         const file = this.files[0];
         const fileNameDisplay = document.getElementById('fileNameDisplay');
@@ -601,7 +581,6 @@
         }
     });
 
-    // ========== تنزيل النسخة المحدّثة ==========
     document.getElementById('downloadJsonBtn').addEventListener('click', function() {
         if (!products || products.length === 0) {
             showToast('⚠️ لا توجد منتجات لتصديرها');
@@ -619,7 +598,6 @@
         showToast('⬇️ تم تنزيل products.json — ارفعه الآن إلى مستودع GitHub');
     });
 
-    // ========== Toast ==========
     function showToast(msg) {
         const t = document.getElementById('toast');
         document.getElementById('toastMsg').textContent = msg;
@@ -628,7 +606,6 @@
         window._toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    // ========== التحميل الأولي: تلقائي من products.json ==========
     autoLoadProducts();
     </script>
 </body>
