@@ -266,19 +266,30 @@
   .file-status-banner{
     background:var(--navy-800);
     border-radius:var(--radius-md);
-    padding:10px 18px;
+    padding:12px 18px;
     margin-bottom:20px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     flex-wrap:wrap;
-    gap:10px;
+    gap:14px;
     font-size:13px;
     color:var(--steel-300);
   }
+  .file-status-banner .status-group{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
   .file-status-banner .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-left:6px;}
   .file-status-banner .dot.green{background:var(--ok-500);}
   .file-status-banner .dot.red{background:var(--danger-500);}
+  .file-status-banner .btn-select{
+    background:var(--amber-500);
+    color:#fff;
+    padding:6px 16px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:12px;
+    transition:.2s;
+  }
+  .file-status-banner .btn-select:hover{background:var(--amber-600);}
 
   @media(max-width:1180px){
     .kpi-grid{grid-template-columns:repeat(3,1fr);}
@@ -304,7 +315,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <a href="home.html" class="back-link">
+      <a href="dashboard.html" class="back-link">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
         إدارة المنتجات
       </a>
@@ -317,10 +328,10 @@
       <button class="icon-action spin-on-click" id="refreshBtn" title="تحديث البيانات">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/></svg>
       </button>
-      <button class="icon-action" id="exportBtn" title="تصدير البيانات JSON">
+      <button class="icon-action" id="exportBtn" title="تنزيل data.json المحدّث">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
       </button>
-      <button class="icon-action danger" id="resetBtn" title="مسح جميع بيانات التحليلات">
+      <button class="icon-action danger" id="resetBtn" title="مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
       </button>
     </div>
@@ -337,17 +348,24 @@
   </div>
 
   <div class="file-status-banner" id="fileStatusBanner">
-    <span>
-      <span class="dot red" id="statusDot"></span>
-      <span id="statusText">المنتجات: جارٍ التحميل...</span>
-    </span>
+    <div class="status-group">
+      <span>
+        <span class="dot red" id="statusDot"></span>
+        <span id="statusText">المنتجات: جارٍ التحميل من products.json...</span>
+      </span>
+      <span>
+        <span class="dot red" id="dataStatusDot"></span>
+        <span id="dataStatusText">السجل المحفوظ (data.json): جارٍ التحميل...</span>
+      </span>
+    </div>
+    <button class="btn-select" id="exportDataBtn">⬇️ تنزيل data.json المحدّث</button>
   </div>
 
   <div id="emptyBanner" class="empty-banner" style="display:none;">
     <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></div>
     <div>
       <h3>لا توجد بيانات حقيقية مسجّلة بعد</h3>
-      <p>هذه اللوحة تعرض الأحداث الفعلية المسجلة من متجرك. قم بزيارة المتجر والتفاعل مع المنتجات، ثم عد لهذه الصفحة لرؤية البيانات تتحدث مباشرة.</p>
+      <p>هذه اللوحة تعرض الأحداث الفعلية المسجلة من متجرك (زيارات، مشاهدات، نقرات، طلبات). قم بزيارة المتجر والتفاعل مع المنتجات، ثم عد لهذه الصفحة لرؤية البيانات. الأحداث تُسجَّل مباشرة في متصفحك، وتُدمَج تلقائياً مع أي سجل محفوظ سابقاً في <code>data.json</code>.</p>
     </div>
   </div>
 
@@ -475,16 +493,19 @@
 </div>
 
 <footer class="note">
-  بيانات الأحداث (الزيارات، المشاهدات، النقرات، الطلبات) معروضة مباشرة من localStorage الخاص بمتصفحك ولا تُرسل لأي خادم خارجي. أما قائمة المنتجات فتُحمّل تلقائياً من ملف products.json.
+  المنتجات تُحمَّل تلقائياً من products.json. أحداث الزيارات والنقرات والطلبات تُسجَّل مباشرة في متصفحك (localStorage) بواسطة صفحات المتجر، وتُدمَج هنا تلقائياً مع أي سجل تاريخي محفوظ في data.json.
+  لجعل هذا السجل التاريخي يظهر لجميع الأجهزة، اضغط "⬇️ تنزيل data.json المحدّث" بين الحين والآخر وارفع الملف إلى مستودع GitHub الخاص بالموقع.
 </footer>
 
 <script>
 /* ================================================================
-   لوحة التحكم — قائمة المنتجات تُحمّل تلقائياً من products.json
-   (بدون localStorage وبدون اختيار ملف يدوي).
-   بيانات الأحداث التحليلية (زيارات/مشاهدات/نقرات/طلبات) تبقى
-   مقروءة من localStorage لأنها سجل تفاعلات حقيقي وليست جزءاً
-   من كتالوج المنتجات.
+   لوحة التحكم — تحميل تلقائي للمنتجات من products.json (بدون
+   الاعتماد على localStorage لكتالوج المنتجات)، ودمج بيانات
+   التحليلات الحيّة المسجّلة في هذا المتصفح (localStorage، تُكتب من
+   صفحات المتجر والمنتج) مع سجل تاريخي محفوظ في data.json.
+   بما أن الموقع مستضاف على GitHub Pages (استضافة ثابتة)، لا يمكن
+   الكتابة التلقائية في data.json على الخادم؛ يمكن تنزيل النسخة
+   المحدّثة ورفعها يدوياً للحفاظ على السجل عبر جميع الأجهزة.
    ================================================================ */
 
 const PLAS_KEYS = {
@@ -495,49 +516,96 @@ const PLAS_KEYS = {
 };
 
 let products = [];
+let persistedAnalytics = { visits:[], product_views:[], clicks:[], orders:[] };
 
-// ========== تحديث حالة المنتجات ==========
+// ========== حالة تحميل المنتجات ==========
 function updateFileStatus(connected, msg = '') {
   const dot = document.getElementById('statusDot');
   const text = document.getElementById('statusText');
   if (connected) {
     dot.className = 'dot green';
-    text.textContent = '✅ ' + msg;
+    text.textContent = '✅ المنتجات: ' + msg;
   } else {
     dot.className = 'dot red';
-    text.textContent = '⚠️ ' + (msg || 'غير متصل');
+    text.textContent = '⚠️ المنتجات: ' + (msg || 'غير متاح');
   }
 }
 
-// ========== تحميل المنتجات تلقائياً من products.json ==========
-async function fetchProductsCatalog() {
-  try {
-    const res = await fetch('products.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+// ========== حالة تحميل data.json ==========
+function updateDataStatus(connected, msg = '') {
+  const dot = document.getElementById('dataStatusDot');
+  const text = document.getElementById('dataStatusText');
+  if (connected) {
+    dot.className = 'dot green';
+    text.textContent = '✅ السجل المحفوظ (data.json): ' + msg;
+  } else {
+    dot.className = 'dot red';
+    text.textContent = '⚠️ السجل المحفوظ (data.json): ' + (msg || 'غير موجود بعد');
+  }
+}
+
+// ========== تحميل تلقائي لكتالوج المنتجات من products.json ==========
+async function loadProductsCatalog(){
+  try{
+    const res = await fetch('products.json', { cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (Array.isArray(data)) {
-      products = data;
-      updateFileStatus(true, `${products.length} منتج`);
-      render();
-      return;
-    }
-    throw new Error('الملف لا يحتوي على مصفوفة');
-  } catch (err) {
+    if(!Array.isArray(data)) throw new Error('صيغة غير صحيحة');
+    products = data;
+    updateFileStatus(true, `${products.length} منتج`);
+  }catch(err){
     console.error('تعذر تحميل products.json:', err);
+    updateFileStatus(false, 'تعذر التحميل');
     products = [];
-    updateFileStatus(false, 'تعذر تحميل products.json');
-    render();
   }
+  render();
 }
 
-// ========== تحميل المصفوفات (أحداث التحليلات فقط) ==========
+// ========== تحميل تلقائي للسجل التاريخي المحفوظ من data.json ==========
+async function loadPersistedAnalytics(){
+  try{
+    const res = await fetch('data.json', { cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    persistedAnalytics = {
+      visits: Array.isArray(data.visits) ? data.visits : [],
+      product_views: Array.isArray(data.product_views) ? data.product_views : [],
+      clicks: Array.isArray(data.clicks) ? data.clicks : [],
+      orders: Array.isArray(data.orders) ? data.orders : []
+    };
+    const total = persistedAnalytics.visits.length + persistedAnalytics.product_views.length + persistedAnalytics.clicks.length + persistedAnalytics.orders.length;
+    updateDataStatus(true, `${total} حدث محفوظ`);
+  }catch(err){
+    console.warn('لا يوجد data.json بعد أو تعذر تحميله:', err.message);
+    persistedAnalytics = { visits:[], product_views:[], clicks:[], orders:[] };
+    updateDataStatus(false, 'لم يُنشأ بعد');
+  }
+  render();
+}
+
+// ========== دمج الأحداث الحيّة (localStorage) مع السجل التاريخي (data.json) ==========
+function dedupeEvents(arr){
+  const seen = new Set();
+  const out = [];
+  arr.forEach(e=>{
+    const k = JSON.stringify(e);
+    if(!seen.has(k)){ seen.add(k); out.push(e); }
+  });
+  return out;
+}
+
+const PERSIST_KEY_MAP = {
+  [PLAS_KEYS.VISITS]: 'visits',
+  [PLAS_KEYS.PRODUCT_VIEWS]: 'product_views',
+  [PLAS_KEYS.CLICKS]: 'clicks',
+  [PLAS_KEYS.ORDERS]: 'orders'
+};
+
 function loadArr(key){
-  try{ const v = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(v) ? v : []; }
-  catch(e){ return []; }
-}
-
-function getProductsCatalog(){
-  return products;
+  let local = [];
+  try{ const v = JSON.parse(localStorage.getItem(key) || '[]'); if(Array.isArray(v)) local = v; }catch(e){}
+  const persisted = persistedAnalytics[PERSIST_KEY_MAP[key]] || [];
+  return dedupeEvents([...persisted, ...local]).sort((a,b)=> (a.ts||0) - (b.ts||0));
 }
 
 let currentRange = '7';
@@ -641,9 +709,8 @@ function render(){
   document.getElementById('rangeLabel').textContent = 'إحصائيات ' + rangeLabels[range];
   document.getElementById('lastUpdate').textContent = 'آخر تحديث: ' + new Date().toLocaleTimeString('ar-MA');
 
-  // ===== أداء المنتجات =====
-  const catalog = getProductsCatalog();
-  const perf = catalog.map(p => {
+  // ===== أداء المنتجات (الكتالوج من products.json فقط) =====
+  const perf = products.map(p => {
     const pViews = views.filter(v => Number(v.productId)===p.id).length;
     const pOrders = orders.filter(o => Number(o.productId)===p.id).length;
     return { ...p, views:pViews, orders:pOrders };
@@ -699,10 +766,11 @@ document.getElementById('refreshBtn').addEventListener('click', (e)=>{
   const svg = e.currentTarget.querySelector('svg');
   svg.style.transform = 'rotate(360deg)';
   setTimeout(()=> svg.style.transform='rotate(0deg)', 500);
-  fetchProductsCatalog();
+  loadProductsCatalog();
+  loadPersistedAnalytics();
 });
 
-document.getElementById('exportBtn').addEventListener('click', ()=>{
+function downloadDataJson(){
   const data = {
     exported_at: new Date().toISOString(),
     visits: loadArr(PLAS_KEYS.VISITS),
@@ -714,13 +782,15 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `PLAS-analytics-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = 'data.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-});
+}
+document.getElementById('exportBtn').addEventListener('click', downloadDataJson);
+document.getElementById('exportDataBtn').addEventListener('click', downloadDataJson);
 
 document.getElementById('resetBtn').addEventListener('click', ()=>{
-  if(confirm('هل أنت متأكد من مسح جميع بيانات التحليلات؟ هذا الإجراء لا يمكن التراجع عنه.')){
+  if(confirm('هل أنت متأكد من مسح بيانات التحليلات المخزّنة محلياً في هذا المتصفح فقط؟ السجل المحفوظ في data.json لن يتأثر إلا بعد تنزيله ورفعه يدوياً من جديد. هذا الإجراء لا يمكن التراجع عنه.')){
     Object.values(PLAS_KEYS).forEach(k => localStorage.removeItem(k));
     render();
   }
@@ -753,8 +823,7 @@ function buildStoreDataSnapshot(){
   const revenue = orders.reduce((s,o)=> s + (Number(o.price)||0), 0);
   const conv = visits.length > 0 ? (orders.length/visits.length*100) : 0;
 
-  const catalog = getProductsCatalog();
-  const perf = catalog.map(p => {
+  const perf = products.map(p => {
     const pViews = views.filter(v => Number(v.productId)===p.id).length;
     const pClicks = clicks.filter(c => Number(c.productId)===p.id).length;
     const pOrders = orders.filter(o => Number(o.productId)===p.id).length;
@@ -892,14 +961,14 @@ document.getElementById('aiChips').addEventListener('click', (e)=>{
   askAiAssistant(chip.dataset.q);
 });
 
-// ========== التحميل الأولي: تلقائي من products.json فقط ==========
-render(); // عرض أولي لأحداث التحليلات فور فتح الصفحة (بدون انتظار المنتجات)
-fetchProductsCatalog(); // يجلب المنتجات من products.json ثم يعيد render()
+// ========== التحميل الأولي: تلقائي بالكامل ==========
+loadProductsCatalog();
+loadPersistedAnalytics();
 
 window.addEventListener('storage', (e)=>{
   if(Object.values(PLAS_KEYS).includes(e.key)) render();
 });
-setInterval(()=>{ fetchProductsCatalog(); }, 20000);
+setInterval(render, 20000);
 </script>
 </body>
 </html>
