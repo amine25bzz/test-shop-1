@@ -796,12 +796,12 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
   }
 });
 
-// ========== Gemini AI (نفس الكود من الملف السابق) ==========
+// ========== Gemini AI ==========
 
 const GEMINI_API_KEY = 'AQ.Ab8RN6KjVcLeLsDRl3lJghnPW_IId52sk6L-4D10Sc-lZ6XRkQ';
-const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODEL = 'gemini-3.6-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
-  
+
 const AI_SYSTEM_PROMPT = `أنت مستشار نمو وتسويق إلكتروني خبير، متخصص في التجارة الإلكترونية والبيع عبر واتساب في السوق المغربي والعربي.
 مهمتك: تحليل بيانات المتجر الحقيقية المرفقة، واستخلاص أنماط وتفسيرات دقيقة، ثم اقتراح خطوات عملية وقابلة للتنفيذ فوراً لزيادة عدد الطلبات والمبيعات ونسبة التحويل.
 اعتمد فقط على الأرقام المعطاة، ولا تخترع بيانات غير موجودة.
@@ -927,9 +927,14 @@ async function askAiAssistant(userQuestion){
     });
     contents.push({ role:'user', parts:[{ text: promptText }] });
 
-    const res = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+    // ملاحظة: المفتاح يُمرَّر عبر header (x-goog-api-key) بدل query param،
+    // وهي الطريقة الرسمية الأكثر ثباتاً مع مفاتيح Auth الجديدة (AQ.).
+    const res = await fetch(GEMINI_URL, {
       method:'POST',
-      headers:{ 'Content-Type':'application/json' },
+      headers:{
+        'Content-Type':'application/json',
+        'x-goog-api-key': GEMINI_API_KEY
+      },
       body: JSON.stringify({ contents })
     });
     const data = await res.json();
