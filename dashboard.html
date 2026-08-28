@@ -459,7 +459,7 @@
         <div class="ai-ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m6.8 6.8-2.8-2.8"/><path d="M2 12h4"/><path d="m6.8 17.2-2.8 2.8"/><path d="M12 18v4"/><path d="m17.2 17.2 2.8 2.8"/><path d="M18 12h4"/><path d="m17.2 6.8 2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg></div>
         <div>
           <h3>المساعد الذكي لتحليل المبيعات والسوق</h3>
-          <p>مدعوم بـ DeepSeek AI — يحلّل بيانات متجرك الحقيقية ويقترح خطوات لزيادة المبيعات</p>
+          <p>مدعوم بـ الذكاء الاصطناعي — يحلّل بيانات متجرك الحقيقية ويقترح خطوات لزيادة المبيعات</p>
         </div>
       </div>
       <button class="ai-btn" id="aiAnalyzeBtn">
@@ -796,11 +796,13 @@ document.getElementById('resetBtn').addEventListener('click', ()=>{
   }
 });
 
-// ========== DeepSeek AI ==========
-
-const DEEPSEEK_API_KEY = 'sk-c2eafe608ec14642897e895d8867113d';
-const DEEPSEEK_MODEL = 'deepseek-chat';
-const DEEPSEEK_URL = 'https://api.deepseek.com/v1/chat/completions';
+// ========== OpenRouter AI ==========
+// ⚠️ ملاحظة أمنية: هاد المفتاح ظاهر فالكود لأن الصفحة كتخدم فالمتصفح مباشرة (client-side).
+// أي واحد كيفتح "View Source" غادي يقدر يشوفه ويستعملو بحسابك. إيلا الموقع غادي يبقى عمومي،
+// الأفضل تدير proxy بسيط (Cloudflare Worker / Vercel Function) يخبي المفتاح.
+const OPENROUTER_API_KEY = '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';
+const OPENROUTER_MODEL = 'openai/gpt-4o-mini'; // بدّل هاد الموديل بأي موديل آخر من openrouter.ai/models
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 const AI_SYSTEM_PROMPT = `أنت مستشار نمو وتسويق إلكتروني خبير، متخصص في التجارة الإلكترونية والبيع عبر واتساب في السوق المغربي والعربي.
 مهمتك: تحليل بيانات المتجر الحقيقية المرفقة، واستخلاص أنماط وتفسيرات دقيقة، ثم اقتراح خطوات عملية وقابلة للتنفيذ فوراً لزيادة عدد الطلبات والمبيعات ونسبة التحويل.
@@ -916,43 +918,37 @@ async function askAiAssistant(userQuestion){
   setAiLoading(true);
 
   try{
-    // بناء رسائل المحادثة بتنسيق DeepSeek
+    // OpenRouter كيستعمل صيغة OpenAI Chat Completions: role تكون
+    // 'system' / 'user' / 'assistant' (بدل 'model' كيف Gemini)
     const messages = [
-      { role: 'system', content: AI_SYSTEM_PROMPT }
+      { role:'system', content: AI_SYSTEM_PROMPT }
     ];
-
-    // إضافة المحادثة السابقة (تخطي الرسالة الأولى التي أضفناها للتو)
-    aiConversation.slice(0, -1).forEach(m => {
-      if (m.role === 'user' || m.role === 'model') {
-        messages.push({ role: m.role, content: m.text });
+    aiConversation.slice(0,-1).forEach(m => {
+      if(m.role==='user' || m.role==='model'){
+        messages.push({ role: m.role==='model' ? 'assistant' : 'user', content: m.text });
       }
     });
+    messages.push({ role:'user', content: promptText });
 
-    // إضافة السؤال الحالي
-    messages.push({ role: 'user', content: promptText });
-
-    const res = await fetch(DEEPSEEK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+    const res = await fetch(OPENROUTER_URL, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization': 'Bearer ' + OPENROUTER_API_KEY,
+        'HTTP-Referer': window.location.origin, // اختياري: لتصنيف الطلب فلوحة openrouter.ai
+        'X-Title': 'EL PLAS Analytics'           // اختياري
       },
       body: JSON.stringify({
-        model: DEEPSEEK_MODEL,
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 2000
+        model: OPENROUTER_MODEL,
+        messages: messages
       })
     });
-
     const data = await res.json();
-
-    if (!res.ok) {
+    if(!res.ok){
       throw new Error(data?.error?.message || `خطأ في الاتصال (${res.status})`);
     }
-
     const answer = data?.choices?.[0]?.message?.content || 'لم يتمكن المساعد من إعطاء إجابة، حاول مرة أخرى.';
-    aiConversation.push({ role: 'model', text: answer });
+    aiConversation.push({ role:'model', text: answer });
   } catch(err){
     aiConversation.push({ role:'error', text: 'تعذر الاتصال بالمساعد الذكي: ' + (err.message || 'خطأ غير معروف') + '. تأكد من صلاحية مفتاح API والاتصال بالإنترنت.' });
   }
